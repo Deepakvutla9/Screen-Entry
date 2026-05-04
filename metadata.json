@@ -1,0 +1,11 @@
+{
+  "name": "Screen Entry",
+  "description": "A premium casting platform connecting talent and production houses in the Telugu film industry. Features role-based dashboards for actors and recruiters, casting call feeds, and one-click applications.",
+  "requestFramePermissions": [],
+  "majorCapabilities": [
+    "Role-based Dashboards",
+    "Real-time Casting Feed",
+    "One-click Applications",
+    "Applicant Management for Recruiters"
+  ]
+}
