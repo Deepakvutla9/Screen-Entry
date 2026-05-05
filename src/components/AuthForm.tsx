@@ -30,21 +30,25 @@ export function AuthForm({ mode }: { mode: Mode }) {
     setError('');
     setLoading(true);
 
-    if (mode === 'signup') {
-      const { data, error: signUpError } = await supabase.auth.signUp({
-        email,
-        password,
-        options: { data: { name, role } },
-      });
-      if (signUpError) { setError(signUpError.message); setLoading(false); return; }
-      if (data.user) setSignupDone(true);
-    } else {
-      const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
-      if (signInError) { setError(signInError.message); setLoading(false); return; }
-      window.location.href = '/dashboard';
-      return;
+    try {
+      if (mode === 'signup') {
+        const { data, error: signUpError } = await supabase.auth.signUp({
+          email,
+          password,
+          options: { data: { name, role } },
+        });
+        if (signUpError) { setError(signUpError.message); setLoading(false); return; }
+        if (data.user) setSignupDone(true);
+        setLoading(false);
+      } else {
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) { setError(signInError.message); setLoading(false); return; }
+        window.location.href = '/dashboard';
+      }
+    } catch (err) {
+      setError('Something went wrong. Please try again.');
+      setLoading(false);
     }
-    setLoading(false);
   };
 
   if (signupDone) {
