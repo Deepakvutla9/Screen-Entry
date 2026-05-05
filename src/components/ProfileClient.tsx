@@ -31,6 +31,10 @@ export function ProfileClient({ profile }: { profile: Profile }) {
   const [languages, setLanguages] = useState(profile.languages?.join(', ') ?? '');
   const [companyName, setCompanyName] = useState(profile.company_name ?? '');
 
+  const [profilePhoto, setProfilePhoto] = useState<string>(profile.profile_photo ?? '');
+  const [uploadingAvatar, setUploadingAvatar] = useState(false);
+  const avatarInputRef = useRef<HTMLInputElement>(null);
+
   const [photos, setPhotos] = useState<string[]>(profile.photos ?? []);
   const [uploadingPhoto, setUploadingPhoto] = useState(false);
   const [photoError, setPhotoError] = useState('');
@@ -70,6 +74,33 @@ export function ProfileClient({ profile }: { profile: Profile }) {
     setUploadingPhoto(false);
     // reset input so same file can be re-selected
     if (photoInputRef.current) photoInputRef.current.value = '';
+  };
+
+  const handleAvatarUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('Photo must be under 5 MB.');
+      return;
+    }
+    setUploadingAvatar(true);
+    const ext = file.name.split('.').pop();
+    const path = `${profile.id}/avatar.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, file, { upsert: true });
+    if (uploadError) {
+      setPhotoError(uploadError.message);
+      setUploadingAvatar(false);
+      return;
+    }
+    const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    // bust cache
+    const url = `${publicUrl}?t=${Date.now()}`;
+    setProfilePhoto(url);
+    await supabase.from('profiles').update({ profile_photo: url }).eq('id', profile.id);
+    setUploadingAvatar(false);
+    if (avatarInputRef.current) avatarInputRef.current.value = '';
   };
 
   const handleRemovePhoto = async (url: string) => {
@@ -134,19 +165,28 @@ export function ProfileClient({ profile }: { profile: Profile }) {
           {/* Avatar row */}
           <div className="flex flex-col md:flex-row items-center gap-8 pb-8 border-b border-slate-100">
             <div className="relative group">
-              <Avatar className="w-32 h-32 border-2 border-dashed border-slate-300">
-                <AvatarImage src={profile.profile_photo ?? ''} alt={profile.name} />
-                <AvatarFallback className="bg-slate-100 text-slate-400 text-3xl">
-                  {profile.profile_photo ? initials(profile.name) : <Camera size={40} />}
+              <Avatar className="w-32 h-32 border-2 border-slate-200">
+                <AvatarImage src={profilePhoto || profile.profile_photo || ''} alt={profile.name} />
+                <AvatarFallback className="bg-[#8B1A1A]/10 text-[#8B1A1A] text-3xl font-bold">
+                  {initials(profile.name)}
                 </AvatarFallback>
               </Avatar>
               <button
                 type="button"
-                title="Upload photo coming soon"
-                className="absolute -bottom-2 -right-2 bg-[#8B1A1A] text-white p-2 rounded-xl shadow-lg opacity-60 cursor-not-allowed"
+                onClick={() => avatarInputRef.current?.click()}
+                disabled={uploadingAvatar}
+                title="Upload profile photo"
+                className="absolute -bottom-2 -right-2 bg-[#8B1A1A] hover:bg-[#5C0808] text-white p-2 rounded-xl shadow-lg transition-colors disabled:opacity-60"
               >
-                <Camera size={16} />
+                {uploadingAvatar ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
               </button>
+              <input
+                ref={avatarInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handleAvatarUpload}
+              />
             </div>
             <div className="flex-1 space-y-2">
               <h3 className="text-xl font-bold">{profile.name}</h3>
