@@ -77,7 +77,17 @@ export function AuthForm({ mode }: { mode: Mode }) {
             <h2 className="text-2xl font-bold text-slate-900">
               {mode === 'login' ? 'Welcome Back' : 'Create your account'}
             </h2>
-            <p className="text-slate-500 mt-2">Join the future of Telugu cinema casting.</p>
+            <p className="text-slate-500 mt-2">
+              {mode === 'login' ? (
+                <>Don&apos;t have an account?{' '}
+                  <a href="/signup" className="text-[#1a3a5f] font-semibold hover:underline">Sign up</a>
+                </>
+              ) : (
+                <>Already have an account?{' '}
+                  <a href="/login" className="text-[#1a3a5f] font-semibold hover:underline">Sign in</a>
+                </>
+              )}
+            </p>
           </div>
 
           <form onSubmit={handleSubmit} className="space-y-5">

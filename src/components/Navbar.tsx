@@ -73,9 +73,14 @@ export function Navbar() {
             </div>
           </>
         ) : (
-          <Button asChild className="bg-[#1a3a5f] text-white hover:bg-[#0d2138]">
-            <Link href="/signup">Join Now</Link>
-          </Button>
+          <div className="flex items-center gap-3">
+            <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
+              Sign In
+            </Link>
+            <Button asChild className="bg-[#1a3a5f] text-white hover:bg-[#0d2138]">
+              <Link href="/signup">Join Now</Link>
+            </Button>
+          </div>
         )}
       </div>
     </nav>
