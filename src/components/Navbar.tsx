@@ -9,7 +9,6 @@ import { createClient, type Profile } from '@/lib/supabase/client';
 
 export function Navbar() {
   const supabase = createClient();
-  const router = useRouter();
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
