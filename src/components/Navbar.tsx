@@ -25,7 +25,11 @@ export function Navbar() {
   }, [supabase]);
 
   const handleLogout = async () => {
-    await supabase.auth.signOut();
+    try {
+      await supabase.auth.signOut();
+    } catch (_) {
+      // ignore errors — proceed to redirect regardless
+    }
     window.location.href = '/';
   };
 
