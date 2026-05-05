@@ -134,6 +134,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [showEduDialog, setShowEduDialog] = useState(false);
   const [showHighlightDialog, setShowHighlightDialog] = useState(false);
+  const [lightbox, setLightbox] = useState<{ type: 'photo' | 'video'; url: string } | null>(null);
 
   useEffect(() => {
     setCalls(getCastingCalls());
@@ -360,38 +361,52 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                     <div className="flex gap-3">
                       {/* Left — large featured photo */}
                       {featuredPhoto ? (
-                        <div className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900" style={{ aspectRatio: '2/3' }}>
+                        <button
+                          onClick={() => setLightbox({ type: 'photo', url: featuredPhoto })}
+                          className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 cursor-zoom-in"
+                          style={{ aspectRatio: '2/3' }}
+                        >
                           {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={featuredPhoto} alt="Featured" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer" />
-                        </div>
+                          <img src={featuredPhoto} alt="Featured" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                        </button>
                       ) : (
-                        /* No photo but has video — show video large on left */
-                        <div className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video">
-                          <iframe src={toEmbedUrl(profile.video_reel!)} className="w-full h-full" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowFullScreen title="Acting Reel" />
-                        </div>
+                        <button
+                          onClick={() => setLightbox({ type: 'video', url: profile.video_reel! })}
+                          className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video relative group"
+                        >
+                          <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition-colors z-10">
+                            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
+                              <Play size={22} className="text-slate-900 ml-1" fill="currentColor" />
+                            </div>
+                          </div>
+                          <span className="absolute bottom-3 left-3 text-white text-xs font-semibold z-10">Acting Reel</span>
+                        </button>
                       )}
 
                       {/* Right — 2×2 grid */}
                       <div className="flex-1 grid grid-cols-2 gap-2">
                         {(remainingItems as Array<{ type: 'video' | 'photo'; url: string; label?: string }>).slice(0, 4).map((item, i) => (
-                          <div key={i} className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-square group">
+                          <button
+                            key={i}
+                            onClick={() => setLightbox({ type: item.type, url: item.url })}
+                            className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-square group cursor-pointer"
+                          >
                             {item.type === 'video' ? (
                               <>
-                                <iframe src={toEmbedUrl(item.url)} className="w-full h-full pointer-events-none" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" title="Reel" />
-                                <div className="absolute inset-0 bg-black/30 flex flex-col items-center justify-center pointer-events-none">
-                                  <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg">
+                                <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
+                                  <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
                                     <Play size={16} className="text-slate-900 ml-0.5" fill="currentColor" />
                                   </div>
-                                  {item.label && (
-                                    <span className="absolute bottom-2 left-2 right-2 text-white text-[10px] font-semibold truncate">{item.label}</span>
-                                  )}
                                 </div>
+                                {item.label && (
+                                  <span className="absolute bottom-2 left-2 right-2 text-white text-[10px] font-semibold truncate text-left">{item.label}</span>
+                                )}
                               </>
                             ) : (
                               // eslint-disable-next-line @next/next/no-img-element
-                              <img src={item.url} alt="Media" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer" />
+                              <img src={item.url} alt="Media" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
                             )}
-                          </div>
+                          </button>
                         ))}
                         {/* Empty add slots */}
                         {Array.from({ length: Math.max(0, 4 - (remainingItems as unknown[]).length) }).map((_, i) => (
@@ -620,6 +635,44 @@ function ActorDashboard({ profile }: { profile: Profile }) {
           </div>
         </div>
       </div>
+
+      {/* Lightbox */}
+      {lightbox && (
+        <div
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 p-4"
+          onClick={() => setLightbox(null)}
+        >
+          <button
+            onClick={() => setLightbox(null)}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+          >
+            ✕
+          </button>
+          <div
+            className="relative max-w-4xl w-full"
+            onClick={(e) => e.stopPropagation()}
+          >
+            {lightbox.type === 'photo' ? (
+              // eslint-disable-next-line @next/next/no-img-element
+              <img
+                src={lightbox.url}
+                alt="Full photo"
+                className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
+              />
+            ) : (
+              <div className="aspect-video w-full rounded-xl overflow-hidden shadow-2xl">
+                <iframe
+                  src={`${toEmbedUrl(lightbox.url)}?autoplay=1`}
+                  className="w-full h-full"
+                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                  allowFullScreen
+                  title="Acting Reel"
+                />
+              </div>
+            )}
+          </div>
+        </div>
+      )}
     </div>
   );
 }
