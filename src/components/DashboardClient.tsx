@@ -1,4 +1,4 @@
-﻿'use client';
+'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -192,16 +192,13 @@ function ActorDashboard({ profile }: { profile: Profile }) {
       <div className="max-w-6xl mx-auto px-6">
         <div className="relative -mt-16 mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
           {/* Avatar */}
-          <div className="relative w-32 h-32 flex-shrink-0">
+          <div className="w-32 h-32 flex-shrink-0">
             <Avatar className="w-32 h-32 border-4 border-white shadow-xl ring-2 ring-[#8B1A1A]/10">
               <AvatarImage src={profile.profile_photo ?? ''} alt={profile.name} />
               <AvatarFallback className="bg-[#8B1A1A] text-white text-3xl font-bold">
                 {initials(profile.name)}
               </AvatarFallback>
             </Avatar>
-            <button className="absolute bottom-1 right-1 w-8 h-8 rounded-full bg-white shadow-md border border-slate-200 flex items-center justify-center hover:bg-slate-50 transition-colors">
-              <Camera size={14} className="text-slate-600" />
-            </button>
           </div>
 
           {/* Name & Meta */}
@@ -212,7 +209,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <span className="font-medium text-[#8B1A1A]">Actor</span>
                 {profile.location && (
                   <>
-                    <span className="text-slate-300">·</span>
+                    <span className="text-slate-300">�</span>
                     <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>
                   </>
                 )}
@@ -256,18 +253,18 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Playing Age</span>
                   <span className="text-sm font-semibold text-slate-800">
-                    {profile.age ? `${Math.max(18, profile.age - 5)}–${profile.age + 5}` : '—'}
+                    {profile.age ? `${Math.max(18, profile.age - 5)}�${profile.age + 5}` : '�'}
                   </span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Height</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.height ?? '—'}</span>
+                  <span className="text-sm font-semibold text-slate-800">{profile.height ?? '�'}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Age</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.age ?? '—'}</span>
+                  <span className="text-sm font-semibold text-slate-800">{profile.age ?? '�'}</span>
                 </div>
               </div>
               <Button asChild variant="ghost" size="sm" className="w-full mt-4 text-[#8B1A1A] text-xs hover:bg-[#8B1A1A]/5">
@@ -333,7 +330,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
           {/* -- MAIN CONTENT -- */}
           <div className="lg:col-span-3 space-y-8">
 
-            {/* Media — Backstage layout: large photo left + 2×2 grid right */}
+            {/* Media � Backstage layout: large photo left + 2�2 grid right */}
             <Card className="p-6 border-slate-200">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Media</h3>
@@ -373,7 +370,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 return (
                   <div>
                     <div className="flex gap-3">
-                      {/* Left — large featured photo */}
+                      {/* Left � large featured photo */}
                       {featuredPhoto ? (
                         <button
                           onClick={() => openLightbox(featuredPhoto)}
@@ -397,7 +394,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                         </button>
                       )}
 
-                      {/* Right — 2×2 grid */}
+                      {/* Right � 2�2 grid */}
                       <div className="flex-1 grid grid-cols-2 gap-2">
                         {(remainingItems as Array<{ type: 'video' | 'photo'; url: string; label?: string }>).slice(0, 4).map((item, i) => (
                           <button
@@ -564,7 +561,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-800">{edu.degree}</p>
-                        <p className="text-xs text-slate-500">{edu.institution}{edu.trainer ? ` · ${edu.trainer}` : ''}</p>
+                        <p className="text-xs text-slate-500">{edu.institution}{edu.trainer ? ` � ${edu.trainer}` : ''}</p>
                         <p className="text-xs text-slate-400 mt-0.5">{edu.year}</p>
                       </div>
                     </div>
@@ -677,7 +674,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               onClick={(e) => { e.stopPropagation(); prevMedia(); }}
               className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
             >
-              ‹
+              �
             </button>
           )}
 
@@ -715,7 +712,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               onClick={(e) => { e.stopPropagation(); nextMedia(); }}
               className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
             >
-              ›
+              �
             </button>
           )}
         </div>
@@ -771,7 +768,7 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
                 <span className="font-medium text-amber-800">Casting Director / Recruiter</span>
                 {profile.location && (
                   <>
-                    <span className="text-slate-300">·</span>
+                    <span className="text-slate-300">�</span>
                     <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>
                   </>
                 )}
@@ -836,7 +833,7 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
                   <div className="flex items-center justify-between">
                     <div className="flex gap-3 text-xs text-slate-400">
                       <span>Age: {call.ageRange}</span>
-                      {call.budget && <span>· {call.budget}</span>}
+                      {call.budget && <span>� {call.budget}</span>}
                     </div>
                     <Button asChild variant="outline" size="sm" className="text-xs border-[#8B1A1A]/30 text-[#8B1A1A] hover:bg-[#8B1A1A]/5">
                       <Link href={`/applicants/${call.id}`}>View Applicants <ChevronRight size={12} /></Link>
@@ -868,11 +865,11 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
                   </div>
                   <div>
                     <Label htmlFor="budget" className="mb-1">Budget</Label>
-                    <Input id="budget" name="budget" placeholder="?50k – ?1L" />
+                    <Input id="budget" name="budget" placeholder="?50k � ?1L" />
                   </div>
                   <div>
                     <Label htmlFor="ageRange" className="mb-1">Age Range</Label>
-                    <Input id="ageRange" name="ageRange" required placeholder="18–25" />
+                    <Input id="ageRange" name="ageRange" required placeholder="18�25" />
                   </div>
                   <div>
                     <Label htmlFor="deadline" className="mb-1">Deadline</Label>

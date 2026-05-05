@@ -140,11 +140,10 @@ export function ProfileClient({ profile }: { profile: Profile }) {
 
     if (dbError) {
       setError(dbError.message);
+      setSaving(false);
     } else {
-      setSaved(true);
-      setTimeout(() => setSaved(false), 3000);
+      router.push('/dashboard');
     }
-    setSaving(false);
   };
 
   return (
