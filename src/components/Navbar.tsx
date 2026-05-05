@@ -25,11 +25,7 @@ export function Navbar() {
   }, [supabase]);
 
   const handleLogout = async () => {
-    try {
-      await supabase.auth.signOut();
-    } catch (_) {
-      // ignore errors — proceed to redirect regardless
-    }
+    await fetch('/api/auth/signout', { method: 'POST' });
     window.location.href = '/';
   };
 
