@@ -35,7 +35,7 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-[#0D0000]/95 backdrop-blur-md border-b border-red-900/40 px-6 py-4 flex items-center justify-between">
-      <Logo size="sm" variant="light" href={profile ? '/dashboard' : '/'} />
+      <Logo size="sm" variant="light" href="/" />
       <div className="flex items-center gap-6">
         {profile ? (
           <>

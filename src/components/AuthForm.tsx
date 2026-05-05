@@ -41,8 +41,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
     } else {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
       if (signInError) { setError(signInError.message); setLoading(false); return; }
-      router.push('/dashboard');
-      router.refresh();
+      window.location.href = '/dashboard';
+      return;
     }
     setLoading(false);
   };
