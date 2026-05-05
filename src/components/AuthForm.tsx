@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Logo } from '@/components/Logo';
 import { createClient } from '@/lib/supabase/client';
 import { cn } from '@/lib/utils';
 
@@ -72,6 +73,9 @@ export function AuthForm({ mode }: { mode: Mode }) {
   return (
     <div className="min-h-[calc(100vh-72px)] flex items-center justify-center p-6 bg-slate-50">
       <div className="max-w-md w-full">
+        <div className="flex justify-center mb-8">
+          <Logo size="md" variant="dark" />
+        </div>
         <Card className="p-8 md:p-10 shadow-2xl">
           <div className="text-center mb-8">
             <h2 className="text-2xl font-bold text-slate-900">

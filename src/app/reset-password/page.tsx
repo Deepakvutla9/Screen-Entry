@@ -7,6 +7,7 @@ import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
+import { Logo } from '@/components/Logo';
 import { createClient } from '@/lib/supabase/client';
 
 function ResetPasswordForm() {
@@ -76,6 +77,9 @@ function ResetPasswordForm() {
 
   return (
     <div className="max-w-md w-full">
+      <div className="flex justify-center mb-8">
+        <Logo size="md" variant="dark" />
+      </div>
       <Card className="p-8 md:p-10 shadow-2xl">
         <div className="text-center mb-8">
           <h2 className="text-2xl font-bold text-slate-900">Set new password</h2>

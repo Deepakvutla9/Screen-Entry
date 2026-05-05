@@ -3,8 +3,9 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { Star, User as UserIcon, LogOut } from 'lucide-react';
+import { User as UserIcon, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Logo } from '@/components/Logo';
 import { createClient, type Profile } from '@/lib/supabase/client';
 
 export function Navbar() {
@@ -34,14 +35,7 @@ export function Navbar() {
 
   return (
     <nav className="sticky top-0 z-50 bg-[#0D0000]/95 backdrop-blur-md border-b border-red-900/40 px-6 py-4 flex items-center justify-between">
-      <Link href="/" className="flex items-center gap-2 cursor-pointer">
-        <div className="bg-amber-500 text-white p-1.5 rounded-lg">
-          <Star size={20} fill="currentColor" />
-        </div>
-        <h1 className="text-xl font-bold tracking-tight text-white">
-          Screen <span className="text-amber-400">Entry</span>
-        </h1>
-      </Link>
+      <Logo size="sm" variant="light" />
       <div className="flex items-center gap-6">
         {profile ? (
           <>
