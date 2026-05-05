@@ -46,13 +46,9 @@ export default function LandingPage() {
           </div>
 
           <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-[0.95] mb-8">
-            Where&nbsp;
-            <span className="relative inline-block">
-              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">Talent</span>
-            </span>
+            Where&nbsp;<span className="text-amber-400">Talent</span>
             <br />
-            Meets the&nbsp;
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">Screen</span>
+            Meets the&nbsp;<span className="text-amber-400">Screen</span>
           </h1>
 
           <p className="text-lg md:text-xl text-white/55 max-w-2xl mx-auto leading-relaxed mb-12">
@@ -279,7 +275,7 @@ export default function LandingPage() {
           <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-5">Ready to begin?</p>
           <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.95] mb-8">
             Your next role<br />
-            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">starts here</span>
+            <span className="text-amber-400">starts here</span>
           </h2>
           <p className="text-white/50 text-lg mb-12 leading-relaxed">
             Join thousands of actors already on Screen Entry. Create your profile in minutes and get discovered by top Telugu productions.
