@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Camera, Video, CheckCircle2, Loader2, ArrowLeft } from 'lucide-react';
+import { Camera, Video, CheckCircle2, Loader2, ArrowLeft, X, ImagePlus } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -10,6 +10,9 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { createClient, type Profile } from '@/lib/supabase/client';
+
+const BUCKET = 'Screen Entry';
+const MAX_PHOTOS = 5;
 
 function initials(name: string) {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
@@ -28,9 +31,55 @@ export function ProfileClient({ profile }: { profile: Profile }) {
   const [languages, setLanguages] = useState(profile.languages?.join(', ') ?? '');
   const [companyName, setCompanyName] = useState(profile.company_name ?? '');
 
+  const [photos, setPhotos] = useState<string[]>(profile.photos ?? []);
+  const [uploadingPhoto, setUploadingPhoto] = useState(false);
+  const [photoError, setPhotoError] = useState('');
+  const photoInputRef = useRef<HTMLInputElement>(null);
+
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
+
+  const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    if (photos.length >= MAX_PHOTOS) {
+      setPhotoError(`Maximum ${MAX_PHOTOS} photos allowed.`);
+      return;
+    }
+    if (file.size > 5 * 1024 * 1024) {
+      setPhotoError('Photo must be under 5 MB.');
+      return;
+    }
+    setPhotoError('');
+    setUploadingPhoto(true);
+    const ext = file.name.split('.').pop();
+    const path = `${profile.id}/${Date.now()}.${ext}`;
+    const { error: uploadError } = await supabase.storage
+      .from(BUCKET)
+      .upload(path, file, { upsert: false });
+    if (uploadError) {
+      setPhotoError(uploadError.message);
+      setUploadingPhoto(false);
+      return;
+    }
+    const { data: { publicUrl } } = supabase.storage.from(BUCKET).getPublicUrl(path);
+    const newPhotos = [...photos, publicUrl];
+    setPhotos(newPhotos);
+    await supabase.from('profiles').update({ photos: newPhotos }).eq('id', profile.id);
+    setUploadingPhoto(false);
+    // reset input so same file can be re-selected
+    if (photoInputRef.current) photoInputRef.current.value = '';
+  };
+
+  const handleRemovePhoto = async (url: string) => {
+    const newPhotos = photos.filter((p) => p !== url);
+    setPhotos(newPhotos);
+    await supabase.from('profiles').update({ photos: newPhotos }).eq('id', profile.id);
+    // extract path from URL and delete from storage
+    const path = url.split(`${BUCKET}/`)[1];
+    if (path) await supabase.storage.from(BUCKET).remove([path]);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -201,6 +250,50 @@ export function ProfileClient({ profile }: { profile: Profile }) {
                 />
               </div>
             )}
+
+            {/* Photos */}
+            <div className="md:col-span-2 pt-2">
+              <Label className="mb-3 block">
+                Photos <span className="text-slate-400 font-normal">({photos.length}/{MAX_PHOTOS})</span>
+              </Label>
+              <div className="flex flex-wrap gap-3">
+                {photos.map((url) => (
+                  <div key={url} className="relative w-28 h-28 rounded-xl overflow-hidden group border border-slate-200">
+                    {/* eslint-disable-next-line @next/next/no-img-element */}
+                    <img src={url} alt="Portfolio photo" className="w-full h-full object-cover" />
+                    <button
+                      type="button"
+                      onClick={() => handleRemovePhoto(url)}
+                      className="absolute top-1 right-1 w-6 h-6 bg-red-500 text-white rounded-full flex items-center justify-center opacity-0 group-hover:opacity-100 transition-opacity shadow"
+                    >
+                      <X size={12} />
+                    </button>
+                  </div>
+                ))}
+                {photos.length < MAX_PHOTOS && (
+                  <button
+                    type="button"
+                    onClick={() => photoInputRef.current?.click()}
+                    disabled={uploadingPhoto}
+                    className="w-28 h-28 rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:border-[#1a3a5f] hover:text-[#1a3a5f] transition-colors disabled:opacity-50"
+                  >
+                    {uploadingPhoto
+                      ? <Loader2 size={20} className="animate-spin" />
+                      : <><ImagePlus size={20} /><span className="text-xs font-medium">Add Photo</span></>
+                    }
+                  </button>
+                )}
+              </div>
+              <input
+                ref={photoInputRef}
+                type="file"
+                accept="image/jpeg,image/png,image/webp"
+                className="hidden"
+                onChange={handlePhotoUpload}
+              />
+              {photoError && <p className="text-red-500 text-xs mt-2">{photoError}</p>}
+              <p className="text-xs text-slate-400 mt-2">Upload up to 5 photos (JPG, PNG, WebP · max 5 MB each)</p>
+            </div>
 
             {/* Feedback & Submit */}
             <div className="md:col-span-2 pt-2 flex items-center gap-4">

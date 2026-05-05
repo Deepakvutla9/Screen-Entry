@@ -22,4 +22,5 @@ export interface Profile {
   video_reel?: string;
   company_name?: string;
   profile_photo?: string;
+  photos?: string[];
 }
