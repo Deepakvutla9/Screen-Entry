@@ -102,7 +102,14 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <Input id="email" type="email" required placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
             <div>
-              <Label htmlFor="password" className="mb-1.5">Password</Label>
+              <div className="flex items-center justify-between mb-1.5">
+                <Label htmlFor="password">Password</Label>
+                {mode === 'login' && (
+                  <a href="/forgot-password" className="text-xs text-[#1a3a5f] font-medium hover:underline">
+                    Forgot password?
+                  </a>
+                )}
+              </div>
               <Input id="password" type="password" required minLength={6} placeholder="Min. 6 characters" value={password} onChange={(e) => setPassword(e.target.value)} />
             </div>
 
