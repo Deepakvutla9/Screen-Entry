@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { Search, MapPin, Users, Clock, CheckCircle2 } from 'lucide-react';
@@ -37,7 +37,7 @@ export function CastingFeedClient({ profile }: { profile: Profile }) {
           <p className="text-slate-500 mt-1">Explore current opportunities across the industry.</p>
         </div>
         <div className="relative group">
-          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#1a3a5f]" />
+          <Search size={18} className="absolute left-3 top-1/2 -translate-y-1/2 text-slate-400 group-focus-within:text-[#8B1A1A]" />
           <Input
             type="text"
             placeholder="Search roles, locations…"
@@ -58,12 +58,12 @@ export function CastingFeedClient({ profile }: { profile: Profile }) {
           filtered.map((call) => {
             const hasApplied = applications.some((a) => a.castingCallId === call.id);
             return (
-              <Card key={call.id} className="hover:border-[#1a3a5f]/30 transition-all group p-6">
+              <Card key={call.id} className="hover:border-[#8B1A1A]/30 transition-all group p-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
-                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#1a3a5f] transition-colors">{call.title}</h3>
-                      <Badge className="bg-emerald-50 text-emerald-700 border-emerald-100">{call.budget || 'Open Budget'}</Badge>
+                      <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#8B1A1A] transition-colors">{call.title}</h3>
+                      <Badge className="bg-amber-50 text-amber-800 border-emerald-100">{call.budget || 'Open Budget'}</Badge>
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm text-slate-500 mb-4">
                       <span className="flex items-center gap-1.5"><MapPin size={14} /> {call.location}</span>
@@ -79,7 +79,7 @@ export function CastingFeedClient({ profile }: { profile: Profile }) {
                   <div className="md:w-40 flex md:flex-col items-center justify-center gap-3">
                     {profile.role === 'actor' ? (
                       <Button
-                        className="w-full bg-[#1a3a5f] hover:bg-[#0d2138]"
+                        className="w-full bg-[#8B1A1A] hover:bg-[#5C0808]"
                         variant={hasApplied ? 'ghost' : 'default'}
                         disabled={hasApplied}
                         onClick={() => handleApply(call.id)}

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -36,12 +36,12 @@ export default function ForgotPasswordPage() {
     return (
       <div className="min-h-[calc(100vh-72px)] flex items-center justify-center p-6 bg-slate-50">
         <Card className="p-10 max-w-md w-full text-center shadow-2xl">
-          <CheckCircle2 size={48} className="text-emerald-500 mx-auto mb-4" />
+          <CheckCircle2 size={48} className="text-amber-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Check your email</h2>
           <p className="text-slate-500 mb-6">
             We sent a password reset link to <strong>{email}</strong>. Click it to set a new password.
           </p>
-          <Link href="/login" className="text-sm text-[#1a3a5f] font-semibold hover:underline flex items-center justify-center gap-1">
+          <Link href="/login" className="text-sm text-[#8B1A1A] font-semibold hover:underline flex items-center justify-center gap-1">
             <ArrowLeft size={14} /> Back to Sign In
           </Link>
         </Card>
@@ -73,13 +73,13 @@ export default function ForgotPasswordPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 text-base bg-[#1a3a5f] hover:bg-[#0d2138]"
+              className="w-full h-12 text-base bg-[#8B1A1A] hover:bg-[#5C0808]"
             >
               {loading ? 'Sending…' : 'Send Reset Link'}
             </Button>
           </form>
           <p className="text-center mt-6">
-            <Link href="/login" className="text-sm text-[#1a3a5f] font-semibold hover:underline flex items-center justify-center gap-1">
+            <Link href="/login" className="text-sm text-[#8B1A1A] font-semibold hover:underline flex items-center justify-center gap-1">
               <ArrowLeft size={14} /> Back to Sign In
             </Link>
           </p>

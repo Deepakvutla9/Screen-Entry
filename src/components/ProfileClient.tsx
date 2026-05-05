@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -123,7 +123,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
           <button
             type="button"
             onClick={() => router.back()}
-            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#1a3a5f] transition-colors"
+            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#8B1A1A] transition-colors"
           >
             <ArrowLeft size={16} /> Back
           </button>
@@ -143,7 +143,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
               <button
                 type="button"
                 title="Upload photo coming soon"
-                className="absolute -bottom-2 -right-2 bg-[#1a3a5f] text-white p-2 rounded-xl shadow-lg opacity-60 cursor-not-allowed"
+                className="absolute -bottom-2 -right-2 bg-[#8B1A1A] text-white p-2 rounded-xl shadow-lg opacity-60 cursor-not-allowed"
               >
                 <Camera size={16} />
               </button>
@@ -151,7 +151,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
             <div className="flex-1 space-y-2">
               <h3 className="text-xl font-bold">{profile.name}</h3>
               <p className="text-slate-500">{profile.email}</p>
-              <Badge className="bg-[#1a3a5f] text-white border-none uppercase tracking-widest">
+              <Badge className="bg-[#8B1A1A] text-white border-none uppercase tracking-widest">
                 {profile.role}
               </Badge>
             </div>
@@ -275,7 +275,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
                     type="button"
                     onClick={() => photoInputRef.current?.click()}
                     disabled={uploadingPhoto}
-                    className="w-28 h-28 rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:border-[#1a3a5f] hover:text-[#1a3a5f] transition-colors disabled:opacity-50"
+                    className="w-28 h-28 rounded-xl border-2 border-dashed border-slate-300 flex flex-col items-center justify-center gap-1.5 text-slate-400 hover:border-[#8B1A1A] hover:text-[#8B1A1A] transition-colors disabled:opacity-50"
                   >
                     {uploadingPhoto
                       ? <Loader2 size={20} className="animate-spin" />
@@ -300,7 +300,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
               <Button
                 type="submit"
                 disabled={saving}
-                className="px-10 bg-[#1a3a5f] hover:bg-[#0d2138] h-11"
+                className="px-10 bg-[#8B1A1A] hover:bg-[#5C0808] h-11"
               >
                 {saving ? (
                   <><Loader2 size={16} className="animate-spin mr-2" /> Saving…</>
@@ -308,7 +308,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
               </Button>
 
               {saved && (
-                <span className="flex items-center gap-1.5 text-emerald-600 text-sm font-medium">
+                <span className="flex items-center gap-1.5 text-amber-600 text-sm font-medium">
                   <CheckCircle2 size={16} /> Profile saved successfully!
                 </span>
               )}

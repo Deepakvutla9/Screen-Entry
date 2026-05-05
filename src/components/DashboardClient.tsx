@@ -83,7 +83,7 @@ function AddCreditDialog({ category, onAdd }: { category: string; onAdd: (c: Cre
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1 text-[#1a3a5f] border-[#1a3a5f]/30 hover:bg-[#1a3a5f]/5">
+        <Button variant="outline" size="sm" className="gap-1 text-[#8B1A1A] border-[#8B1A1A]/30 hover:bg-[#8B1A1A]/5">
           <Plus size={14} /> Add {category} Credit
         </Button>
       </DialogTrigger>
@@ -116,7 +116,7 @@ function AddCreditDialog({ category, onAdd }: { category: string; onAdd: (c: Cre
           </div>
           <div className="flex gap-3 pt-2">
             <Button type="button" variant="ghost" className="flex-1" onClick={() => setOpen(false)}>Cancel</Button>
-            <Button type="submit" className="flex-1 bg-[#1a3a5f] hover:bg-[#0d2138]">Add Credit</Button>
+            <Button type="submit" className="flex-1 bg-[#8B1A1A] hover:bg-[#5C0808]">Add Credit</Button>
           </div>
         </form>
       </DialogContent>
@@ -184,7 +184,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Hero Banner */}
-      <div className="relative h-40 bg-gradient-to-r from-[#1a3a5f] via-[#1a3a5f]/90 to-emerald-800">
+      <div className="relative h-40 bg-gradient-to-br from-[#0D0000] via-[#8B1A1A] to-[#1a0505]">
         <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
       </div>
 
@@ -193,9 +193,9 @@ function ActorDashboard({ profile }: { profile: Profile }) {
         <div className="relative -mt-16 mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
           {/* Avatar */}
           <div className="relative w-32 h-32 flex-shrink-0">
-            <Avatar className="w-32 h-32 border-4 border-white shadow-xl ring-2 ring-[#1a3a5f]/10">
+            <Avatar className="w-32 h-32 border-4 border-white shadow-xl ring-2 ring-[#8B1A1A]/10">
               <AvatarImage src={profile.profile_photo ?? ''} alt={profile.name} />
-              <AvatarFallback className="bg-[#1a3a5f] text-white text-3xl font-bold">
+              <AvatarFallback className="bg-[#8B1A1A] text-white text-3xl font-bold">
                 {initials(profile.name)}
               </AvatarFallback>
             </Avatar>
@@ -209,10 +209,10 @@ function ActorDashboard({ profile }: { profile: Profile }) {
             <div>
               <h1 className="text-3xl font-bold text-slate-900 leading-tight">{profile.name}</h1>
               <p className="text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
-                <span className="font-medium text-[#1a3a5f]">Actor</span>
+                <span className="font-medium text-[#8B1A1A]">Actor</span>
                 {profile.location && (
                   <>
-                    <span className="text-slate-300">Â·</span>
+                    <span className="text-slate-300">·</span>
                     <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>
                   </>
                 )}
@@ -222,7 +222,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               <Button asChild variant="outline" size="sm" className="gap-1.5">
                 <Link href="/profile"><Edit3 size={14} /> Edit Profile</Link>
               </Button>
-              <Button asChild size="sm" className="bg-[#1a3a5f] hover:bg-[#0d2138] gap-1.5">
+              <Button asChild size="sm" className="bg-[#8B1A1A] hover:bg-[#5C0808] gap-1.5">
                 <Link href="/feed"><ChevronRight size={14} /> Browse Roles</Link>
               </Button>
             </div>
@@ -232,11 +232,11 @@ function ActorDashboard({ profile }: { profile: Profile }) {
         {/* Quick Stats */}
         <div className="grid grid-cols-3 gap-4 mb-8">
           <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-[#1a3a5f]">{applications.length}</p>
+            <p className="text-2xl font-bold text-[#8B1A1A]">{applications.length}</p>
             <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Applications</p>
           </Card>
           <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-emerald-600">{shortlisted}</p>
+            <p className="text-2xl font-bold text-amber-600">{shortlisted}</p>
             <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Shortlisted</p>
           </Card>
           <Card className="p-4 text-center border-slate-200">
@@ -246,7 +246,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
         </div>
 
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-16">
-          {/* â”€â”€ LEFT SIDEBAR â”€â”€ */}
+          {/* -- LEFT SIDEBAR -- */}
           <div className="lg:col-span-1 space-y-6">
 
             {/* Appearance */}
@@ -256,21 +256,21 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Playing Age</span>
                   <span className="text-sm font-semibold text-slate-800">
-                    {profile.age ? `${Math.max(18, profile.age - 5)}â€“${profile.age + 5}` : 'â€”'}
+                    {profile.age ? `${Math.max(18, profile.age - 5)}–${profile.age + 5}` : '—'}
                   </span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Height</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.height ?? 'â€”'}</span>
+                  <span className="text-sm font-semibold text-slate-800">{profile.height ?? '—'}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Age</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.age ?? 'â€”'}</span>
+                  <span className="text-sm font-semibold text-slate-800">{profile.age ?? '—'}</span>
                 </div>
               </div>
-              <Button asChild variant="ghost" size="sm" className="w-full mt-4 text-[#1a3a5f] text-xs hover:bg-[#1a3a5f]/5">
+              <Button asChild variant="ghost" size="sm" className="w-full mt-4 text-[#8B1A1A] text-xs hover:bg-[#8B1A1A]/5">
                 <Link href="/profile"><Edit3 size={12} className="mr-1" /> Update Appearance</Link>
               </Button>
             </Card>
@@ -287,7 +287,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               ) : (
                 <p className="text-sm text-slate-400 italic">No languages added</p>
               )}
-              <Button asChild variant="ghost" size="sm" className="w-full mt-3 text-[#1a3a5f] text-xs hover:bg-[#1a3a5f]/5">
+              <Button asChild variant="ghost" size="sm" className="w-full mt-3 text-[#8B1A1A] text-xs hover:bg-[#8B1A1A]/5">
                 <Link href="/profile"><Plus size={12} className="mr-1" /> Add Language</Link>
               </Button>
             </Card>
@@ -296,7 +296,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
             <Card className="p-5 border-slate-200">
               <div className="flex items-center justify-between mb-3">
                 <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Applications</h3>
-                <Link href="/feed" className="text-[10px] font-semibold text-[#1a3a5f] flex items-center gap-0.5">
+                <Link href="/feed" className="text-[10px] font-semibold text-[#8B1A1A] flex items-center gap-0.5">
                   Find more <ChevronRight size={12} />
                 </Link>
               </div>
@@ -304,7 +304,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <div className="text-center py-4">
                   <Briefcase size={24} className="mx-auto text-slate-300 mb-2" />
                   <p className="text-xs text-slate-400">No applications yet</p>
-                  <Button asChild variant="ghost" size="sm" className="mt-2 text-xs text-[#1a3a5f]">
+                  <Button asChild variant="ghost" size="sm" className="mt-2 text-xs text-[#8B1A1A]">
                     <Link href="/feed">Browse Roles</Link>
                   </Button>
                 </div>
@@ -316,8 +316,8 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                       <div key={app.id} className="flex items-center justify-between">
                         <p className="text-xs text-slate-700 truncate max-w-[130px]">{call?.title ?? 'Unknown Role'}</p>
                         <Badge className={cn('text-[10px] px-1.5 py-0',
-                          app.status === 'pending' && 'bg-blue-50 text-blue-700 border-blue-200',
-                          app.status === 'shortlisted' && 'bg-emerald-50 text-emerald-700 border-emerald-200',
+                          app.status === 'pending' && 'bg-red-50 text-blue-700 border-blue-200',
+                          app.status === 'shortlisted' && 'bg-amber-50 text-amber-800 border-emerald-200',
                           app.status === 'rejected' && 'bg-red-50 text-red-700 border-red-200',
                         )}>
                           {app.status}
@@ -330,14 +330,14 @@ function ActorDashboard({ profile }: { profile: Profile }) {
             </Card>
           </div>
 
-          {/* â”€â”€ MAIN CONTENT â”€â”€ */}
+          {/* -- MAIN CONTENT -- */}
           <div className="lg:col-span-3 space-y-8">
 
-            {/* Media â€” Backstage layout: large photo left + 2Ã—2 grid right */}
+            {/* Media — Backstage layout: large photo left + 2×2 grid right */}
             <Card className="p-6 border-slate-200">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Media</h3>
-                <Link href="/profile" className="text-xs text-[#1a3a5f] font-semibold hover:underline flex items-center gap-1">
+                <Link href="/profile" className="text-xs text-[#8B1A1A] font-semibold hover:underline flex items-center gap-1">
                   <Edit3 size={12} /> Edit
                 </Link>
               </div>
@@ -358,7 +358,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                       <Camera size={32} className="mx-auto text-slate-300 mb-3" />
                       <p className="text-sm font-medium text-slate-700 mb-1">No media yet</p>
                       <p className="text-xs text-slate-400 mb-4">Add photos and a video reel to your profile</p>
-                      <Button asChild variant="outline" size="sm" className="gap-1.5 text-[#1a3a5f] border-[#1a3a5f]/30">
+                      <Button asChild variant="outline" size="sm" className="gap-1.5 text-[#8B1A1A] border-[#8B1A1A]/30">
                         <Link href="/profile"><Plus size={14} /> Add Media</Link>
                       </Button>
                     </div>
@@ -373,7 +373,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 return (
                   <div>
                     <div className="flex gap-3">
-                      {/* Left â€” large featured photo */}
+                      {/* Left — large featured photo */}
                       {featuredPhoto ? (
                         <button
                           onClick={() => openLightbox(featuredPhoto)}
@@ -397,7 +397,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                         </button>
                       )}
 
-                      {/* Right â€” 2Ã—2 grid */}
+                      {/* Right — 2×2 grid */}
                       <div className="flex-1 grid grid-cols-2 gap-2">
                         {(remainingItems as Array<{ type: 'video' | 'photo'; url: string; label?: string }>).slice(0, 4).map((item, i) => (
                           <button
@@ -424,7 +424,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                         ))}
                         {/* Empty add slots */}
                         {Array.from({ length: Math.max(0, 4 - (remainingItems as unknown[]).length) }).map((_, i) => (
-                          <Link key={`add-${i}`} href="/profile" className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-300 hover:border-[#1a3a5f] hover:text-[#1a3a5f] transition-colors">
+                          <Link key={`add-${i}`} href="/profile" className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-300 hover:border-[#8B1A1A] hover:text-[#8B1A1A] transition-colors">
                             <Plus size={16} />
                             <span className="text-[10px] font-medium">Add</span>
                           </Link>
@@ -434,7 +434,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
 
                     {/* View More / Add More */}
                     <div className="mt-3 text-center">
-                      <Link href="/profile" className="text-xs text-slate-500 hover:text-[#1a3a5f] font-medium flex items-center justify-center gap-1">
+                      <Link href="/profile" className="text-xs text-slate-500 hover:text-[#8B1A1A] font-medium flex items-center justify-center gap-1">
                         <ChevronRight size={14} /> View &amp; Manage Media
                       </Link>
                     </div>
@@ -449,10 +449,10 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               <Tabs defaultValue="television">
                 <TabsList className="flex flex-wrap h-auto gap-1 bg-slate-100/80 p-1 rounded-lg mb-5">
                   {CREDIT_TABS.map(({ value, label, icon: Icon }) => (
-                    <TabsTrigger key={value} value={value} className="flex items-center gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:text-[#1a3a5f] data-[state=active]:shadow-sm">
+                    <TabsTrigger key={value} value={value} className="flex items-center gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:text-[#8B1A1A] data-[state=active]:shadow-sm">
                       <Icon size={12} />{label}
                       {credits[value].length > 0 && (
-                        <span className="ml-1 bg-[#1a3a5f] text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center">
+                        <span className="ml-1 bg-[#8B1A1A] text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center">
                           {credits[value].length}
                         </span>
                       )}
@@ -496,14 +496,14 @@ function ActorDashboard({ profile }: { profile: Profile }) {
             <Card className="p-6 border-slate-200">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Skills</h3>
-                <Button asChild variant="ghost" size="sm" className="text-xs text-[#1a3a5f] gap-1 hover:bg-[#1a3a5f]/5">
+                <Button asChild variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
                   <Link href="/profile"><Plus size={12} /> Add Skill</Link>
                 </Button>
               </div>
               {profile.skills.length > 0 ? (
                 <div className="flex flex-wrap gap-2">
                   {profile.skills.map((skill) => (
-                    <Badge key={skill} variant="outline" className="text-sm px-3 py-1 border-slate-200 text-slate-700 bg-white hover:border-[#1a3a5f]/30 hover:text-[#1a3a5f] transition-colors cursor-default">
+                    <Badge key={skill} variant="outline" className="text-sm px-3 py-1 border-slate-200 text-slate-700 bg-white hover:border-[#8B1A1A]/30 hover:text-[#8B1A1A] transition-colors cursor-default">
                       {skill}
                     </Badge>
                   ))}
@@ -522,7 +522,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Education &amp; Training</h3>
                 <Dialog open={showEduDialog} onOpenChange={setShowEduDialog}>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-xs text-[#1a3a5f] gap-1 hover:bg-[#1a3a5f]/5">
+                    <Button variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
                       <Plus size={12} /> Add
                     </Button>
                   </DialogTrigger>
@@ -549,7 +549,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                       </div>
                       <div className="flex gap-3 pt-2">
                         <Button type="button" variant="ghost" className="flex-1" onClick={() => setShowEduDialog(false)}>Cancel</Button>
-                        <Button type="submit" className="flex-1 bg-[#1a3a5f] hover:bg-[#0d2138]">Add</Button>
+                        <Button type="submit" className="flex-1 bg-[#8B1A1A] hover:bg-[#5C0808]">Add</Button>
                       </div>
                     </form>
                   </DialogContent>
@@ -559,12 +559,12 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <div className="space-y-3">
                   {educations.map((edu) => (
                     <div key={edu.id} className="flex gap-4 py-3 border-b border-slate-100 last:border-0">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#1a3a5f]/10 flex items-center justify-center">
-                        <GraduationCap size={18} className="text-[#1a3a5f]" />
+                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#8B1A1A]/10 flex items-center justify-center">
+                        <GraduationCap size={18} className="text-[#8B1A1A]" />
                       </div>
                       <div>
                         <p className="text-sm font-semibold text-slate-800">{edu.degree}</p>
-                        <p className="text-xs text-slate-500">{edu.institution}{edu.trainer ? ` Â· ${edu.trainer}` : ''}</p>
+                        <p className="text-xs text-slate-500">{edu.institution}{edu.trainer ? ` · ${edu.trainer}` : ''}</p>
                         <p className="text-xs text-slate-400 mt-0.5">{edu.year}</p>
                       </div>
                     </div>
@@ -584,7 +584,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Highlights</h3>
                 <Dialog open={showHighlightDialog} onOpenChange={setShowHighlightDialog}>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-xs text-[#1a3a5f] gap-1 hover:bg-[#1a3a5f]/5">
+                    <Button variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
                       <Plus size={12} /> Add
                     </Button>
                   </DialogTrigger>
@@ -597,7 +597,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                       </div>
                       <div className="flex gap-3 pt-2">
                         <Button type="button" variant="ghost" className="flex-1" onClick={() => setShowHighlightDialog(false)}>Cancel</Button>
-                        <Button type="submit" className="flex-1 bg-[#1a3a5f] hover:bg-[#0d2138]">Add</Button>
+                        <Button type="submit" className="flex-1 bg-[#8B1A1A] hover:bg-[#5C0808]">Add</Button>
                       </div>
                     </form>
                   </DialogContent>
@@ -624,7 +624,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
             <Card className="p-6 border-slate-200">
               <div className="flex items-center justify-between mb-4">
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Social Media &amp; Websites</h3>
-                <Button asChild variant="ghost" size="sm" className="text-xs text-[#1a3a5f] gap-1 hover:bg-[#1a3a5f]/5">
+                <Button asChild variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
                   <Link href="/profile"><Plus size={12} /> Add Link</Link>
                 </Button>
               </div>
@@ -661,7 +661,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
             onClick={closeLightbox}
             className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-lg transition-colors z-10"
           >
-            âœ•
+            ?
           </button>
 
           {/* Counter */}
@@ -677,7 +677,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               onClick={(e) => { e.stopPropagation(); prevMedia(); }}
               className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
             >
-              â€¹
+              ‹
             </button>
           )}
 
@@ -715,7 +715,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               onClick={(e) => { e.stopPropagation(); nextMedia(); }}
               className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
             >
-              â€º
+              ›
             </button>
           )}
         </div>
@@ -752,14 +752,14 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Banner */}
-      <div className="h-40 bg-gradient-to-r from-[#1a3a5f] via-[#1a3a5f]/90 to-emerald-800" />
+      <div className="h-40 bg-gradient-to-br from-[#0D0000] via-[#8B1A1A] to-[#1a0505]" />
 
       <div className="max-w-6xl mx-auto px-6">
         {/* Company Header */}
         <div className="relative -mt-16 mb-8 flex flex-col sm:flex-row sm:items-end gap-4">
           <div className="relative w-32 h-32 flex-shrink-0">
             <Avatar className="w-32 h-32 border-4 border-white shadow-xl">
-              <AvatarFallback className="bg-emerald-700 text-white text-3xl font-bold">
+              <AvatarFallback className="bg-amber-800 text-white text-3xl font-bold">
                 {initials(profile.company_name ?? profile.name)}
               </AvatarFallback>
             </Avatar>
@@ -768,16 +768,16 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
             <div>
               <h1 className="text-3xl font-bold text-slate-900">{profile.company_name ?? profile.name}</h1>
               <p className="text-slate-500 mt-0.5 flex items-center gap-2">
-                <span className="font-medium text-emerald-700">Casting Director / Recruiter</span>
+                <span className="font-medium text-amber-800">Casting Director / Recruiter</span>
                 {profile.location && (
                   <>
-                    <span className="text-slate-300">Â·</span>
+                    <span className="text-slate-300">·</span>
                     <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>
                   </>
                 )}
               </p>
             </div>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-[#1a3a5f] hover:bg-[#0d2138] gap-2 shadow-lg">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-[#8B1A1A] hover:bg-[#5C0808] gap-2 shadow-lg">
               <Plus size={16} /> Post Casting Call
             </Button>
           </div>
@@ -786,11 +786,11 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
         {/* Stats */}
         <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
           <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-[#1a3a5f]">{myPosts.length}</p>
+            <p className="text-2xl font-bold text-[#8B1A1A]">{myPosts.length}</p>
             <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Active Posts</p>
           </Card>
           <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-emerald-600">0</p>
+            <p className="text-2xl font-bold text-amber-600">0</p>
             <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Total Applicants</p>
           </Card>
           <Card className="p-4 text-center border-slate-200 sm:col-span-1 col-span-2">
@@ -803,7 +803,7 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
         <div className="pb-16">
           <div className="flex items-center justify-between mb-4">
             <h2 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Your Casting Calls</h2>
-            <Button asChild variant="ghost" size="sm" className="text-xs text-[#1a3a5f]">
+            <Button asChild variant="ghost" size="sm" className="text-xs text-[#8B1A1A]">
               <Link href="/feed">View Feed <ChevronRight size={13} /></Link>
             </Button>
           </div>
@@ -815,7 +815,7 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
               </div>
               <p className="text-slate-600 font-medium mb-1">No casting calls posted yet</p>
               <p className="text-sm text-slate-400 mb-4">Start posting to find the perfect talent for your production</p>
-              <Button onClick={() => setShowCreateModal(true)} className="bg-[#1a3a5f] hover:bg-[#0d2138] gap-2">
+              <Button onClick={() => setShowCreateModal(true)} className="bg-[#8B1A1A] hover:bg-[#5C0808] gap-2">
                 <Plus size={16} /> Post Your First Casting Call
               </Button>
             </Card>
@@ -830,15 +830,15 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
                         <MapPin size={12} />{call.location}
                       </p>
                     </div>
-                    <Badge className="ml-3 bg-emerald-50 text-emerald-700 border-emerald-200 text-xs flex-shrink-0">Active</Badge>
+                    <Badge className="ml-3 bg-amber-50 text-amber-800 border-emerald-200 text-xs flex-shrink-0">Active</Badge>
                   </div>
                   <p className="text-xs text-slate-500 line-clamp-2 mb-4">{call.roleDescription}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex gap-3 text-xs text-slate-400">
                       <span>Age: {call.ageRange}</span>
-                      {call.budget && <span>Â· {call.budget}</span>}
+                      {call.budget && <span>· {call.budget}</span>}
                     </div>
-                    <Button asChild variant="outline" size="sm" className="text-xs border-[#1a3a5f]/30 text-[#1a3a5f] hover:bg-[#1a3a5f]/5">
+                    <Button asChild variant="outline" size="sm" className="text-xs border-[#8B1A1A]/30 text-[#8B1A1A] hover:bg-[#8B1A1A]/5">
                       <Link href={`/applicants/${call.id}`}>View Applicants <ChevronRight size={12} /></Link>
                     </Button>
                   </div>
@@ -868,11 +868,11 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
                   </div>
                   <div>
                     <Label htmlFor="budget" className="mb-1">Budget</Label>
-                    <Input id="budget" name="budget" placeholder="â‚¹50k â€“ â‚¹1L" />
+                    <Input id="budget" name="budget" placeholder="?50k – ?1L" />
                   </div>
                   <div>
                     <Label htmlFor="ageRange" className="mb-1">Age Range</Label>
-                    <Input id="ageRange" name="ageRange" required placeholder="18â€“25" />
+                    <Input id="ageRange" name="ageRange" required placeholder="18–25" />
                   </div>
                   <div>
                     <Label htmlFor="deadline" className="mb-1">Deadline</Label>
@@ -889,7 +889,7 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
                 </div>
                 <div className="flex gap-4 pt-4">
                   <Button type="button" variant="ghost" className="flex-1" onClick={() => setShowCreateModal(false)}>Cancel</Button>
-                  <Button type="submit" className="flex-1 bg-[#1a3a5f] hover:bg-[#0d2138]">Post Call</Button>
+                  <Button type="submit" className="flex-1 bg-[#8B1A1A] hover:bg-[#5C0808]">Post Call</Button>
                 </div>
               </form>
             </Card>

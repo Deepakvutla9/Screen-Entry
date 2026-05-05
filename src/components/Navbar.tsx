@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
@@ -33,42 +33,42 @@ export function Navbar() {
   };
 
   return (
-    <nav className="sticky top-0 z-50 bg-white/80 backdrop-blur-md border-b border-slate-200 px-6 py-4 flex items-center justify-between">
+    <nav className="sticky top-0 z-50 bg-[#0D0000]/95 backdrop-blur-md border-b border-red-900/40 px-6 py-4 flex items-center justify-between">
       <Link href="/" className="flex items-center gap-2 cursor-pointer">
-        <div className="bg-[#1a3a5f] text-white p-1.5 rounded-lg">
+        <div className="bg-amber-500 text-white p-1.5 rounded-lg">
           <Star size={20} fill="currentColor" />
         </div>
-        <h1 className="text-xl font-bold tracking-tight text-[#1a3a5f]">
-          Screen <span className="text-emerald-600">Entry</span>
+        <h1 className="text-xl font-bold tracking-tight text-white">
+          Screen <span className="text-amber-400">Entry</span>
         </h1>
       </Link>
       <div className="flex items-center gap-6">
         {profile ? (
           <>
-            <Link href="/feed" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
+            <Link href="/feed" className="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
               Casting Feed
             </Link>
-            <Link href="/browse" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
+            <Link href="/browse" className="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
               Browse Talent
             </Link>
-            <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
+            <Link href="/dashboard" className="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
               My Profile
             </Link>
-            <div className="h-6 w-px bg-slate-200" />
+            <div className="h-6 w-px bg-red-900/40" />
             <div className="flex items-center gap-3">
               <div className="text-right hidden sm:block">
-                <p className="text-sm font-semibold text-slate-900">{profile.name}</p>
-                <p className="text-xs text-slate-500 capitalize">{profile.role}</p>
+                <p className="text-sm font-semibold text-white">{profile.name}</p>
+                <p className="text-xs text-slate-400 capitalize">{profile.role}</p>
               </div>
               <Link
                 href="/profile"
-                className="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 flex items-center justify-center text-[#1a3a5f]"
+                className="w-9 h-9 rounded-full bg-red-900/30 border border-red-800/40 flex items-center justify-center text-amber-400"
               >
                 <UserIcon size={18} />
               </Link>
               <button
                 onClick={handleLogout}
-                className="p-2 text-slate-400 hover:text-red-500 transition-colors"
+                className="p-2 text-slate-400 hover:text-amber-400 transition-colors"
                 aria-label="Sign out"
               >
                 <LogOut size={18} />
@@ -77,10 +77,10 @@ export function Navbar() {
           </>
         ) : (
           <div className="flex items-center gap-3">
-            <Link href="/login" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
+            <Link href="/login" className="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
               Sign In
             </Link>
-            <Button asChild className="bg-[#1a3a5f] text-white hover:bg-[#0d2138]">
+            <Button asChild className="bg-amber-500 text-white hover:bg-amber-600 border-none">
               <Link href="/signup">Join Now</Link>
             </Button>
           </div>

@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { Suspense, useEffect, useState } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
@@ -58,7 +58,7 @@ function ResetPasswordForm() {
   if (!ready) {
     return (
       <div className="flex flex-col items-center gap-3 text-slate-500">
-        <Loader2 size={32} className="animate-spin text-[#1a3a5f]" />
+        <Loader2 size={32} className="animate-spin text-[#8B1A1A]" />
         <p className="text-sm">Verifying your reset link…</p>
       </div>
     );
@@ -67,7 +67,7 @@ function ResetPasswordForm() {
   if (done) {
     return (
       <Card className="p-10 max-w-md w-full text-center shadow-2xl">
-        <CheckCircle2 size={48} className="text-emerald-500 mx-auto mb-4" />
+        <CheckCircle2 size={48} className="text-amber-500 mx-auto mb-4" />
         <h2 className="text-2xl font-bold text-slate-900 mb-2">Password updated!</h2>
         <p className="text-slate-500">Redirecting you to your dashboard…</p>
       </Card>
@@ -122,7 +122,7 @@ function ResetPasswordForm() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full h-12 text-base bg-[#1a3a5f] hover:bg-[#0d2138]"
+              className="w-full h-12 text-base bg-[#8B1A1A] hover:bg-[#5C0808]"
             >
               {loading ? 'Updating…' : 'Update Password'}
             </Button>
@@ -138,7 +138,7 @@ export default function ResetPasswordPage() {
     <div className="min-h-[calc(100vh-72px)] flex items-center justify-center p-6 bg-slate-50">
       <Suspense fallback={
         <div className="flex flex-col items-center gap-3 text-slate-500">
-          <Loader2 size={32} className="animate-spin text-[#1a3a5f]" />
+          <Loader2 size={32} className="animate-spin text-[#8B1A1A]" />
         </div>
       }>
         <ResetPasswordForm />

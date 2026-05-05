@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
@@ -59,7 +59,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
     return (
       <div className="min-h-[calc(100vh-72px)] flex items-center justify-center p-6 bg-slate-50">
         <Card className="p-10 max-w-md w-full text-center shadow-2xl">
-          <CheckCircle2 size={48} className="text-emerald-500 mx-auto mb-4" />
+          <CheckCircle2 size={48} className="text-amber-500 mx-auto mb-4" />
           <h2 className="text-2xl font-bold text-slate-900 mb-2">Check your email</h2>
           <p className="text-slate-500">
             We sent a confirmation link to <strong>{email}</strong>. Click it to activate your account, then sign in.
@@ -80,11 +80,11 @@ export function AuthForm({ mode }: { mode: Mode }) {
             <p className="text-slate-500 mt-2">
               {mode === 'login' ? (
                 <>Don&apos;t have an account?{' '}
-                  <a href="/signup" className="text-[#1a3a5f] font-semibold hover:underline">Sign up</a>
+                  <a href="/signup" className="text-[#8B1A1A] font-semibold hover:underline">Sign up</a>
                 </>
               ) : (
                 <>Already have an account?{' '}
-                  <a href="/login" className="text-[#1a3a5f] font-semibold hover:underline">Sign in</a>
+                  <a href="/login" className="text-[#8B1A1A] font-semibold hover:underline">Sign in</a>
                 </>
               )}
             </p>
@@ -105,7 +105,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <div className="flex items-center justify-between mb-1.5">
                 <Label htmlFor="password">Password</Label>
                 {mode === 'login' && (
-                  <a href="/forgot-password" className="text-xs text-[#1a3a5f] font-medium hover:underline">
+                  <a href="/forgot-password" className="text-xs text-[#8B1A1A] font-medium hover:underline">
                     Forgot password?
                   </a>
                 )}
@@ -117,13 +117,13 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <div>
                 <Label className="mb-1.5">I am joining as</Label>
                 <div className="grid grid-cols-2 gap-3 mt-2">
-                  <button type="button" onClick={() => setRole('actor')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'actor' ? 'border-[#1a3a5f] bg-[#1a3a5f]/5' : 'border-slate-100 hover:border-slate-200')}>
-                    <UserIcon size={20} className={role === 'actor' ? 'text-[#1a3a5f]' : 'text-slate-400'} />
-                    <span className={cn('text-sm font-bold', role === 'actor' ? 'text-[#1a3a5f]' : 'text-slate-600')}>Actor</span>
+                  <button type="button" onClick={() => setRole('actor')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'actor' ? 'border-[#8B1A1A] bg-[#8B1A1A]/5' : 'border-slate-100 hover:border-slate-200')}>
+                    <UserIcon size={20} className={role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-400'} />
+                    <span className={cn('text-sm font-bold', role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-600')}>Actor</span>
                   </button>
-                  <button type="button" onClick={() => setRole('recruiter')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'recruiter' ? 'border-emerald-600 bg-emerald-50' : 'border-slate-100 hover:border-slate-200')}>
-                    <Briefcase size={20} className={role === 'recruiter' ? 'text-emerald-600' : 'text-slate-400'} />
-                    <span className={cn('text-sm font-bold', role === 'recruiter' ? 'text-emerald-600' : 'text-slate-600')}>Recruiter</span>
+                  <button type="button" onClick={() => setRole('recruiter')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'recruiter' ? 'border-amber-600 bg-amber-50' : 'border-slate-100 hover:border-slate-200')}>
+                    <Briefcase size={20} className={role === 'recruiter' ? 'text-amber-600' : 'text-slate-400'} />
+                    <span className={cn('text-sm font-bold', role === 'recruiter' ? 'text-amber-600' : 'text-slate-600')}>Recruiter</span>
                   </button>
                 </div>
               </div>
@@ -131,7 +131,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
             {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
 
-            <Button type="submit" disabled={loading} className="w-full h-12 text-lg mt-4 bg-[#1a3a5f] hover:bg-[#0d2138] shadow-lg shadow-[#1a3a5f]/10">
+            <Button type="submit" disabled={loading} className="w-full h-12 text-lg mt-4 bg-[#8B1A1A] hover:bg-[#5C0808] shadow-lg shadow-[#8B1A1A]/10">
               {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Get Started'}
             </Button>
 

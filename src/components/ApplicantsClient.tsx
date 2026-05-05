@@ -1,4 +1,4 @@
-'use client';
+﻿'use client';
 
 import { useEffect, useState } from 'react';
 import { Users } from 'lucide-react';
@@ -57,7 +57,7 @@ export function ApplicantsClient({ callId, viewer }: { callId: string; viewer: P
           {applicants.map((app) => (
             <Card key={app.id} className="p-6">
               <div className="flex items-center gap-4 mb-4">
-                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-[#1a3a5f] text-xl font-bold">
+                <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center text-[#8B1A1A] text-xl font-bold">
                   {app.actor?.name[0] || '?'}
                 </div>
                 <div>
@@ -73,10 +73,10 @@ export function ApplicantsClient({ callId, viewer }: { callId: string; viewer: P
               <div className="flex gap-2">
                 <Button variant="outline" className="flex-1 text-sm py-2">View Reel</Button>
                 {app.status === 'shortlisted' ? (
-                  <Badge className="bg-emerald-50 text-emerald-700 border-none px-4 py-2 flex items-center justify-center flex-1">Shortlisted</Badge>
+                  <Badge className="bg-amber-50 text-amber-800 border-none px-4 py-2 flex items-center justify-center flex-1">Shortlisted</Badge>
                 ) : (
                   <Button
-                    className="flex-1 text-sm py-2 bg-emerald-600 hover:bg-emerald-700 text-white"
+                    className="flex-1 text-sm py-2 bg-amber-600 hover:bg-amber-800 text-white"
                     onClick={() => { updateApplicationStatus(app.id, 'shortlisted'); refresh(); }}
                   >
                     Shortlist

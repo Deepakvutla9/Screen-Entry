@@ -1,6 +1,7 @@
-'use client';
+﻿'use client';
 
 import { useState } from 'react';
+import Link from 'next/link';
 import { Search, MapPin, Users } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -35,7 +36,7 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
   return (
     <div className="min-h-screen bg-slate-50">
       {/* Header */}
-      <div className="bg-[#1a3a5f] py-14 px-6 text-white text-center">
+      <div className="bg-gradient-to-br from-[#0D0000] via-[#8B1A1A] to-[#1a0505] py-14 px-6 text-white text-center">
         <h1 className="text-4xl font-bold tracking-tight mb-2">Browse Talent</h1>
         <p className="text-slate-300 text-lg">
           {actors.length} actor{actors.length !== 1 ? 's' : ''} registered on Screen Entry
@@ -57,7 +58,7 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
           <select
             value={filterLang}
             onChange={(e) => setFilterLang(e.target.value)}
-            className="h-10 px-3 rounded-md border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#1a3a5f]/30"
+            className="h-10 px-3 rounded-md border border-slate-200 bg-white text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-[#8B1A1A]/30"
           >
             <option value="">All Languages</option>
             {allLanguages.map((lang) => (
@@ -69,7 +70,7 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
         {/* Results count */}
         <p className="text-sm text-slate-500 mb-6">
           Showing <span className="font-semibold text-slate-800">{filtered.length}</span> result{filtered.length !== 1 ? 's' : ''}
-          {search && <> for &ldquo;<span className="text-[#1a3a5f]">{search}</span>&rdquo;</>}
+          {search && <> for &ldquo;<span className="text-[#8B1A1A]">{search}</span>&rdquo;</>}
         </p>
 
         {/* Grid */}
@@ -84,9 +85,9 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
             {filtered.map((actor) => {
               const photo = actor.profile_photo || (actor.photos ?? [])[0];
               return (
+                <Link key={actor.id} href={`/actors/${actor.id}`}>
                 <Card
-                  key={actor.id}
-                  className="group overflow-hidden p-0 border-slate-200 hover:border-[#1a3a5f]/40 hover:shadow-md transition-all cursor-default"
+                  className="group overflow-hidden p-0 border-slate-200 hover:border-[#8B1A1A]/40 hover:shadow-md transition-all cursor-pointer"
                 >
                   {/* Photo */}
                   <div className="aspect-[3/4] overflow-hidden relative bg-slate-100">
@@ -98,9 +99,9 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
                         className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
                       />
                     ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#1a3a5f]/10 to-emerald-50">
+                      <div className="w-full h-full flex items-center justify-center bg-gradient-to-br from-[#8B1A1A]/10 to-amber-50">
                         <Avatar className="w-20 h-20">
-                          <AvatarFallback className="bg-[#1a3a5f] text-white text-2xl font-bold">
+                          <AvatarFallback className="bg-[#8B1A1A] text-white text-2xl font-bold">
                             {initials(actor.name)}
                           </AvatarFallback>
                         </Avatar>
@@ -116,7 +117,7 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
 
                   {/* Info */}
                   <div className="p-3">
-                    <h4 className="font-bold text-slate-900 text-sm truncate group-hover:text-[#1a3a5f] transition-colors">
+                    <h4 className="font-bold text-slate-900 text-sm truncate group-hover:text-[#8B1A1A] transition-colors">
                       {actor.name}
                     </h4>
                     {actor.location && (
@@ -152,6 +153,7 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
                     )}
                   </div>
                 </Card>
+              </Link>
               );
             })}
           </div>
