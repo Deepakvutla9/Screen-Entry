@@ -171,20 +171,19 @@ export function ProfileClient({ profile }: { profile: Profile }) {
                   {initials(profile.name)}
                 </AvatarFallback>
               </Avatar>
-              <button
-                type="button"
-                onClick={() => avatarInputRef.current?.click()}
-                disabled={uploadingAvatar}
+              <label
+                htmlFor="avatar-upload"
                 title="Upload profile photo"
-                className="absolute -bottom-2 -right-2 bg-[#8B1A1A] hover:bg-[#5C0808] text-white p-2 rounded-xl shadow-lg transition-colors disabled:opacity-60"
+                className={`absolute -bottom-2 -right-2 bg-[#8B1A1A] hover:bg-[#5C0808] text-white p-2 rounded-xl shadow-lg transition-colors cursor-pointer ${uploadingAvatar ? 'opacity-60 pointer-events-none' : ''}`}
               >
                 {uploadingAvatar ? <Loader2 size={16} className="animate-spin" /> : <Camera size={16} />}
-              </button>
+              </label>
               <input
+                id="avatar-upload"
                 ref={avatarInputRef}
                 type="file"
                 accept="image/jpeg,image/png,image/webp"
-                className="hidden"
+                className="sr-only"
                 onChange={handleAvatarUpload}
               />
             </div>
