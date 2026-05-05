@@ -137,6 +137,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const mediaItems: Array<{ type: 'photo' | 'video'; url: string; label?: string }> = [
+    ...(profile.profile_photo ? [{ type: 'photo' as const, url: profile.profile_photo, label: 'Profile Photo' }] : []),
     ...(profile.video_reel ? [{ type: 'video' as const, url: profile.video_reel, label: 'Acting Reel' }] : []),
     ...(profile.photos ?? []).map((url) => ({ type: 'photo' as const, url })),
   ];
@@ -193,12 +194,18 @@ function ActorDashboard({ profile }: { profile: Profile }) {
         <div className="relative -mt-16 mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
           {/* Avatar */}
           <div className="w-32 h-32 flex-shrink-0">
-            <Avatar className="w-32 h-32 border-4 border-white shadow-xl ring-2 ring-[#8B1A1A]/10">
-              <AvatarImage src={profile.profile_photo ?? ''} alt={profile.name} />
-              <AvatarFallback className="bg-[#8B1A1A] text-white text-3xl font-bold">
-                {initials(profile.name)}
-              </AvatarFallback>
-            </Avatar>
+            <button
+              type="button"
+              onClick={() => profile.profile_photo && openLightbox(profile.profile_photo)}
+              className={profile.profile_photo ? 'cursor-zoom-in' : 'cursor-default'}
+            >
+              <Avatar className="w-32 h-32 border-4 border-white shadow-xl ring-2 ring-[#8B1A1A]/10">
+                <AvatarImage src={profile.profile_photo ?? ''} alt={profile.name} />
+                <AvatarFallback className="bg-[#8B1A1A] text-white text-3xl font-bold">
+                  {initials(profile.name)}
+                </AvatarFallback>
+              </Avatar>
+            </button>
           </div>
 
           {/* Name & Meta */}
