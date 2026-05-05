@@ -29,7 +29,7 @@ I am a non-technical founder building this solo with AI coding agents. I read co
 ## 3. Current State of the Project
 
 > **This section must be updated at the end of every session.**
-> Last updated: 2026-05-04
+> Last updated: 2026-05-04 (Next.js + shadcn rewrite landed on `next-rewrite` branch)
 
 ### What's been built
 
@@ -53,14 +53,48 @@ I am a non-technical founder building this solo with AI coding agents. I read co
 
 | Layer | Current Choice | Notes |
 |---|---|---|
-| Framework | React 19 + Vite | Prototype — not Next.js yet |
-| Styling | Tailwind CSS v4 | No shadcn/ui yet |
-| Auth | Supabase Auth | Email/password live; Google OAuth button built but not activated |
+| Framework | Next.js 15 (App Router) + React 19 | Migrated from Vite on `next-rewrite` branch |
+| Styling | Tailwind CSS v4 + shadcn/ui (new-york style) | Components: Button, Card, Badge, Input, Label |
+| Auth | Supabase Auth via `@supabase/ssr` | Email/password live; Google OAuth button built but not activated |
 | Database | Supabase (PostgreSQL) | Profiles table live; casting calls + applications still in localStorage |
-| ORM/Client | @supabase/supabase-js | Direct client, no Prisma yet |
-| State / mock data | localStorage (MockStore) | `src/lib/store.ts` — to be replaced by Supabase queries |
+| ORM/Client | @supabase/supabase-js + @supabase/ssr | Browser/server clients in `src/lib/supabase/`, no Prisma yet |
+| State / mock data | localStorage (client-only helpers) | `src/lib/store.ts` — to be replaced by Supabase queries |
 | Package manager | npm | |
-| Hosting | Not deployed yet | Runs locally on port 3000 |
+| Hosting | Vercel auto-deploys from `main` branch | `next-rewrite` branch builds preview deploys only |
+
+### Folder structure (Next.js)
+
+```
+src/
+├── app/
+│   ├── layout.tsx          (root layout + Navbar + footer)
+│   ├── page.tsx            (landing - Server Component)
+│   ├── globals.css         (Tailwind + shadcn theme tokens)
+│   ├── login/page.tsx
+│   ├── signup/page.tsx
+│   ├── dashboard/page.tsx  (calls requireProfile)
+│   ├── feed/page.tsx
+│   ├── profile/page.tsx
+│   └── applicants/[id]/page.tsx
+├── components/
+│   ├── ui/                 (shadcn primitives — generated)
+│   ├── Navbar.tsx          (client — auth-aware)
+│   ├── AuthForm.tsx
+│   ├── DashboardClient.tsx
+│   ├── CastingFeedClient.tsx
+│   ├── ProfileClient.tsx
+│   └── ApplicantsClient.tsx
+├── lib/
+│   ├── supabase/
+│   │   ├── client.ts       (browser — for client components)
+│   │   └── server.ts       (server — for RSCs/route handlers)
+│   ├── auth.ts             (requireProfile helper)
+│   ├── data.ts             (server-safe seed data)
+│   ├── store.ts            (client-only localStorage helpers)
+│   └── utils.ts            (cn helper)
+├── types.ts                (User, Profile, CastingCall, Application, etc.)
+└── middleware.ts           (refreshes Supabase session)
+```
 
 ---
 
