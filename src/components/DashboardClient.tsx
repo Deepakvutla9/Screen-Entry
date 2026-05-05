@@ -318,70 +318,91 @@ function ActorDashboard({ profile }: { profile: Profile }) {
           {/* ── MAIN CONTENT ── */}
           <div className="lg:col-span-3 space-y-8">
 
-            {/* Media / Acting Reel */}
+            {/* Media — Photos first (large), Video second (small) */}
             <Card className="p-6 border-slate-200">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4">Media</h3>
-              {profile.video_reel ? (
-                <div className="space-y-3">
-                  <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900">
-                    <iframe
-                      src={toEmbedUrl(profile.video_reel)}
-                      className="w-full h-full"
-                      allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                      allowFullScreen
-                      title="Acting Reel"
-                    />
-                  </div>
-                  <p className="text-xs text-slate-500 font-medium">Acting Reel</p>
-                </div>
-              ) : (
-                <div className="border-2 border-dashed border-slate-200 rounded-xl p-10 text-center">
-                  <div className="w-14 h-14 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
-                    <Play size={22} className="text-slate-400" />
-                  </div>
-                  <p className="text-sm font-medium text-slate-700 mb-1">Upload Your Acting Reel</p>
-                  <p className="text-xs text-slate-400 mb-4">Add a YouTube or Vimeo link to showcase your work</p>
-                  <Button asChild variant="outline" size="sm" className="gap-1.5 text-[#1a3a5f] border-[#1a3a5f]/30">
-                    <Link href="/profile"><Plus size={14} /> Add Video Reel</Link>
-                  </Button>
-                </div>
-              )}
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Media</h3>
+                <Link href="/profile" className="text-xs text-[#1a3a5f] font-semibold hover:underline flex items-center gap-1">
+                  <Edit3 size={12} /> Edit
+                </Link>
+              </div>
 
-              {/* Photos sub-section inside Media */}
-              {(profile.photos ?? []).length === 0 && (
-                <div className="mt-4 border-t border-slate-100 pt-4">
-                  <div className="flex items-center justify-between mb-3">
-                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Photos</p>
-                    <Link href="/profile" className="text-xs text-[#1a3a5f] font-semibold hover:underline flex items-center gap-1">
-                      <Plus size={12} /> Add Photos
-                    </Link>
+              {/* ── PHOTOS (large, prominent) ── */}
+              <div className="mb-5">
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Photos</p>
+                {(profile.photos ?? []).length > 0 ? (
+                  <div className={`grid gap-3 ${
+                    (profile.photos ?? []).length === 1 ? 'grid-cols-1' :
+                    (profile.photos ?? []).length === 2 ? 'grid-cols-2' :
+                    'grid-cols-3'
+                  }`}>
+                    {(profile.photos ?? []).map((url, i) => (
+                      <div
+                        key={i}
+                        className={`rounded-xl overflow-hidden border border-slate-200 ${
+                          (profile.photos ?? []).length === 1 ? 'aspect-video' : 'aspect-square'
+                        }`}
+                      >
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={url}
+                          alt={`Photo ${i + 1}`}
+                          className="w-full h-full object-cover hover:scale-105 transition-transform duration-300 cursor-pointer"
+                        />
+                      </div>
+                    ))}
+                    {(profile.photos ?? []).length < 5 && (
+                      <Link
+                        href="/profile"
+                        className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-400 hover:border-[#1a3a5f] hover:text-[#1a3a5f] transition-colors"
+                      >
+                        <Plus size={18} />
+                        <span className="text-xs font-medium">Add</span>
+                      </Link>
+                    )}
                   </div>
-                  <p className="text-sm text-slate-400 italic">No photos uploaded yet. Add up to 5 photos from your Profile Settings.</p>
-                </div>
-              )}
-            </Card>
-
-            {/* Photos */}
-            {(profile.photos ?? []).length > 0 && (
-              <Card className="p-6 border-slate-200">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4">Photos</h3>
-                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
-                  {(profile.photos ?? []).map((url, i) => (
-                    <div key={i} className="aspect-square rounded-xl overflow-hidden border border-slate-200">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                ) : (
+                  <div className="border-2 border-dashed border-slate-200 rounded-xl p-8 text-center">
+                    <div className="w-12 h-12 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-3">
+                      <Camera size={20} className="text-slate-400" />
                     </div>
-                  ))}
-                  <a
-                    href="/profile"
-                    className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-400 hover:border-[#1a3a5f] hover:text-[#1a3a5f] transition-colors"
-                  >
-                    <Plus size={18} />
-                    <span className="text-xs font-medium">Add</span>
-                  </a>
-                </div>
-              </Card>
-            )}
+                    <p className="text-sm font-medium text-slate-700 mb-1">No photos yet</p>
+                    <p className="text-xs text-slate-400 mb-3">Upload up to 5 portfolio photos</p>
+                    <Button asChild variant="outline" size="sm" className="gap-1.5 text-[#1a3a5f] border-[#1a3a5f]/30">
+                      <Link href="/profile"><Plus size={14} /> Add Photos</Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+
+              <Separator className="my-5" />
+
+              {/* ── VIDEO (small, below photos) ── */}
+              <div>
+                <p className="text-xs font-semibold text-slate-400 uppercase tracking-widest mb-3">Acting Reel</p>
+                {profile.video_reel ? (
+                  <div className="w-full sm:w-72 rounded-xl overflow-hidden bg-slate-900 border border-slate-200">
+                    <div className="aspect-video">
+                      <iframe
+                        src={toEmbedUrl(profile.video_reel)}
+                        className="w-full h-full"
+                        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+                        allowFullScreen
+                        title="Acting Reel"
+                      />
+                    </div>
+                  </div>
+                ) : (
+                  <div className="border-2 border-dashed border-slate-200 rounded-xl p-6 text-center w-full sm:w-72">
+                    <Play size={20} className="mx-auto text-slate-300 mb-2" />
+                    <p className="text-sm text-slate-400 mb-3">No reel added yet</p>
+                    <Button asChild variant="outline" size="sm" className="gap-1.5 text-[#1a3a5f] border-[#1a3a5f]/30">
+                      <Link href="/profile"><Plus size={14} /> Add Reel</Link>
+                    </Button>
+                  </div>
+                )}
+              </div>
+            </Card>
 
             {/* Credits & Experience */}
             <Card className="p-6 border-slate-200">
