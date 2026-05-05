@@ -23,4 +23,8 @@ export interface Profile {
   company_name?: string;
   profile_photo?: string;
   photos?: string[];
+  instagram?: string;
+  twitter?: string;
+  youtube?: string;
+  website?: string;
 }

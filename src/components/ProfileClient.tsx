@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Camera, Video, CheckCircle2, Loader2, ArrowLeft, X, ImagePlus } from 'lucide-react';
+import { Camera, Video, CheckCircle2, Loader2, ArrowLeft, X, ImagePlus, Instagram, Youtube, Globe, Twitter } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -30,6 +30,10 @@ export function ProfileClient({ profile }: { profile: Profile }) {
   const [skills, setSkills] = useState(profile.skills?.join(', ') ?? '');
   const [languages, setLanguages] = useState(profile.languages?.join(', ') ?? '');
   const [companyName, setCompanyName] = useState(profile.company_name ?? '');
+  const [instagram, setInstagram] = useState(profile.instagram ?? '');
+  const [twitter, setTwitter] = useState(profile.twitter ?? '');
+  const [youtube, setYoutube] = useState(profile.youtube ?? '');
+  const [website, setWebsite] = useState(profile.website ?? '');
 
   const [profilePhoto, setProfilePhoto] = useState<string>(profile.profile_photo ?? '');
   const [uploadingAvatar, setUploadingAvatar] = useState(false);
@@ -132,6 +136,11 @@ export function ProfileClient({ profile }: { profile: Profile }) {
     } else {
       updates.company_name = companyName.trim() || undefined;
     }
+
+    updates.instagram = instagram.trim() || undefined;
+    updates.twitter = twitter.trim() || undefined;
+    updates.youtube = youtube.trim() || undefined;
+    updates.website = website.trim() || undefined;
 
     const { error: dbError } = await supabase
       .from('profiles')
@@ -288,6 +297,29 @@ export function ProfileClient({ profile }: { profile: Profile }) {
                 />
               </div>
             )}
+
+            {/* Social Links */}
+            <div className="md:col-span-2 pt-2 border-t border-slate-100">
+              <h3 className="text-sm font-bold text-slate-700 uppercase tracking-widest mb-4 mt-2">Social Links</h3>
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                  <Label htmlFor="instagram" className="mb-1.5 flex items-center gap-1.5"><Instagram size={14} className="text-pink-500" /> Instagram</Label>
+                  <Input id="instagram" value={instagram} onChange={(e) => setInstagram(e.target.value)} placeholder="https://instagram.com/yourhandle" />
+                </div>
+                <div>
+                  <Label htmlFor="twitter" className="mb-1.5 flex items-center gap-1.5"><Twitter size={14} className="text-sky-500" /> Twitter / X</Label>
+                  <Input id="twitter" value={twitter} onChange={(e) => setTwitter(e.target.value)} placeholder="https://twitter.com/yourhandle" />
+                </div>
+                <div>
+                  <Label htmlFor="youtube" className="mb-1.5 flex items-center gap-1.5"><Youtube size={14} className="text-red-500" /> YouTube Channel</Label>
+                  <Input id="youtube" value={youtube} onChange={(e) => setYoutube(e.target.value)} placeholder="https://youtube.com/@yourchannel" />
+                </div>
+                <div>
+                  <Label htmlFor="website" className="mb-1.5 flex items-center gap-1.5"><Globe size={14} className="text-blue-500" /> Website / IMDB</Label>
+                  <Input id="website" value={website} onChange={(e) => setWebsite(e.target.value)} placeholder="https://yourwebsite.com" />
+                </div>
+              </div>
+            </div>
 
             {/* Photos */}
             <div className="md:col-span-2 pt-2">

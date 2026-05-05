@@ -3,9 +3,10 @@
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
 import {
-  Plus, Briefcase, ChevronRight, Camera, Film, Tv, Theater,
+  Plus, Briefcase, ChevronRight, Film, Tv, Theater,
   Mic, Music, Star, GraduationCap, Globe, Instagram, Youtube,
-  MapPin, User as UserIcon, Edit3, ExternalLink, Play,
+  MapPin, Edit3, ExternalLink, Play, X, Twitter,
+  Clapperboard, Languages, Sparkles, Award,
 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
@@ -25,26 +26,15 @@ import type { Application, CastingCall } from '@/types';
 function toEmbedUrl(url: string): string {
   try {
     const u = new URL(url);
-    // youtube.com/watch?v=ID
-    if (u.hostname.includes('youtube.com') && u.searchParams.get('v')) {
+    if (u.hostname.includes('youtube.com') && u.searchParams.get('v'))
       return `https://www.youtube.com/embed/${u.searchParams.get('v')}`;
-    }
-    // youtube.com/shorts/ID
-    if (u.hostname.includes('youtube.com') && u.pathname.startsWith('/shorts/')) {
-      const id = u.pathname.replace('/shorts/', '').split('?')[0];
-      return `https://www.youtube.com/embed/${id}`;
-    }
-    // youtu.be/ID
-    if (u.hostname === 'youtu.be') {
+    if (u.hostname.includes('youtube.com') && u.pathname.startsWith('/shorts/'))
+      return `https://www.youtube.com/embed/${u.pathname.replace('/shorts/', '').split('?')[0]}`;
+    if (u.hostname === 'youtu.be')
       return `https://www.youtube.com/embed${u.pathname}`;
-    }
-    // vimeo.com/ID
-    if (u.hostname.includes('vimeo.com')) {
+    if (u.hostname.includes('vimeo.com'))
       return `https://player.vimeo.com/video${u.pathname}`;
-    }
-  } catch {
-    // fall through
-  }
+  } catch { /* fall through */ }
   return url;
 }
 
@@ -83,7 +73,7 @@ function AddCreditDialog({ category, onAdd }: { category: string; onAdd: (c: Cre
   return (
     <Dialog open={open} onOpenChange={setOpen}>
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm" className="gap-1 text-[#8B1A1A] border-[#8B1A1A]/30 hover:bg-[#8B1A1A]/5">
+        <Button variant="outline" size="sm" className="gap-1.5 text-[#8B1A1A] border-[#8B1A1A]/30 hover:bg-[#8B1A1A]/5">
           <Plus size={14} /> Add {category} Credit
         </Button>
       </DialogTrigger>
@@ -93,26 +83,11 @@ function AddCreditDialog({ category, onAdd }: { category: string; onAdd: (c: Cre
         </DialogHeader>
         <form onSubmit={handleSubmit} className="space-y-3 pt-2">
           <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label className="text-xs mb-1">Year</Label>
-              <Input name="year" placeholder="2024" required />
-            </div>
-            <div>
-              <Label className="text-xs mb-1">Role / Character</Label>
-              <Input name="role" placeholder="Lead Actor" required />
-            </div>
-            <div className="col-span-2">
-              <Label className="text-xs mb-1">Production / Show Name</Label>
-              <Input name="production" placeholder="Film or show title" required />
-            </div>
-            <div>
-              <Label className="text-xs mb-1">Director</Label>
-              <Input name="director" placeholder="Director name" />
-            </div>
-            <div>
-              <Label className="text-xs mb-1">Location</Label>
-              <Input name="location" placeholder="Hyderabad, India" />
-            </div>
+            <div><Label className="text-xs mb-1">Year</Label><Input name="year" placeholder="2024" required /></div>
+            <div><Label className="text-xs mb-1">Role / Character</Label><Input name="role" placeholder="Lead Actor" required /></div>
+            <div className="col-span-2"><Label className="text-xs mb-1">Production / Show Name</Label><Input name="production" placeholder="Film or show title" required /></div>
+            <div><Label className="text-xs mb-1">Director</Label><Input name="director" placeholder="Director name" /></div>
+            <div><Label className="text-xs mb-1">Location</Label><Input name="location" placeholder="Hyderabad, India" /></div>
           </div>
           <div className="flex gap-3 pt-2">
             <Button type="button" variant="ghost" className="flex-1" onClick={() => setOpen(false)}>Cancel</Button>
@@ -156,9 +131,8 @@ function ActorDashboard({ profile }: { profile: Profile }) {
     setApplications(getApplicationsForActor(profile.id));
   }, [profile.id]);
 
-  const addCredit = (category: string, credit: Credit) => {
+  const addCredit = (category: string, credit: Credit) =>
     setCredits((prev) => ({ ...prev, [category]: [credit, ...prev[category]] }));
-  };
 
   const addEducation = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -181,134 +155,213 @@ function ActorDashboard({ profile }: { profile: Profile }) {
   };
 
   const shortlisted = applications.filter((a) => a.status === 'shortlisted').length;
+  const totalCredits = Object.values(credits).flat().length;
+
+  const socialLinks = [
+    { href: profile.instagram, icon: Instagram, label: 'Instagram', color: 'hover:text-pink-400 hover:border-pink-500/40', activeColor: 'text-pink-400 border-pink-500/40 bg-pink-500/10' },
+    { href: profile.twitter, icon: Twitter, label: 'Twitter / X', color: 'hover:text-sky-400 hover:border-sky-500/40', activeColor: 'text-sky-400 border-sky-500/40 bg-sky-500/10' },
+    { href: profile.youtube, icon: Youtube, label: 'YouTube', color: 'hover:text-red-400 hover:border-red-500/40', activeColor: 'text-red-400 border-red-500/40 bg-red-500/10' },
+    { href: profile.website, icon: Globe, label: 'Website', color: 'hover:text-blue-400 hover:border-blue-500/40', activeColor: 'text-blue-400 border-blue-500/40 bg-blue-500/10' },
+  ].filter((s) => s.href);
 
   return (
-    <div className="min-h-screen bg-slate-50">
-      {/* Hero Banner */}
-      <div className="relative h-40 bg-gradient-to-br from-[#0D0000] via-[#8B1A1A] to-[#1a0505]">
-        <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'url("data:image/svg+xml,%3Csvg width=\'60\' height=\'60\' viewBox=\'0 0 60 60\' xmlns=\'http://www.w3.org/2000/svg\'%3E%3Cg fill=\'none\' fill-rule=\'evenodd\'%3E%3Cg fill=\'%23ffffff\' fill-opacity=\'0.4\'%3E%3Cpath d=\'M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z\'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E")' }} />
+    <div className="min-h-screen bg-[#0a0a0a]">
+
+      {/* ── Cinematic Banner ── */}
+      <div className="relative h-56 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0D0000] via-[#3d0808] to-[#0D0000]" />
+        {/* Film grain overlay */}
+        <div className="absolute inset-0 opacity-[0.04]" style={{
+          backgroundImage: `url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)'/%3E%3C/svg%3E")`,
+        }} />
+        {/* Amber spotlight glow */}
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[200px] rounded-full opacity-20"
+          style={{ background: 'radial-gradient(ellipse, #f59e0b 0%, transparent 70%)', filter: 'blur(40px)' }} />
+        {/* Film strip decoration */}
+        <div className="absolute bottom-0 left-0 right-0 h-8 flex">
+          {Array.from({ length: 40 }).map((_, i) => (
+            <div key={i} className="flex-1 border-r border-white/5 flex flex-col justify-between py-1">
+              <div className="h-1.5 bg-white/10 mx-0.5 rounded-sm" />
+              <div className="h-1.5 bg-white/10 mx-0.5 rounded-sm" />
+            </div>
+          ))}
+        </div>
+        {/* Clapperboard watermark */}
+        <Clapperboard size={120} className="absolute right-12 top-1/2 -translate-y-1/2 text-white/[0.04]" />
       </div>
 
-      {/* Profile Header */}
-      <div className="max-w-6xl mx-auto px-6">
-        <div className="relative -mt-16 mb-6 flex flex-col sm:flex-row sm:items-end gap-4">
-          {/* Avatar */}
-          <div className="w-32 h-32 flex-shrink-0">
-            <button
-              type="button"
-              onClick={() => profile.profile_photo && openLightbox(profile.profile_photo)}
-              className={profile.profile_photo ? 'cursor-zoom-in' : 'cursor-default'}
-            >
-              <Avatar className="w-32 h-32 border-4 border-white shadow-xl ring-2 ring-[#8B1A1A]/10">
+      {/* ── Profile Header ── */}
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
+        <div className="relative -mt-20 mb-8 flex flex-col sm:flex-row sm:items-end gap-5">
+
+          {/* Avatar with amber ring */}
+          <button
+            type="button"
+            onClick={() => profile.profile_photo && openLightbox(profile.profile_photo)}
+            className={profile.profile_photo ? 'cursor-zoom-in flex-shrink-0' : 'cursor-default flex-shrink-0'}
+          >
+            <div className="relative">
+              <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-400 to-[#8B1A1A] opacity-80 blur-sm" />
+              <Avatar className="relative w-32 h-32 border-4 border-[#0a0a0a] shadow-2xl">
                 <AvatarImage src={profile.profile_photo ?? ''} alt={profile.name} />
-                <AvatarFallback className="bg-[#8B1A1A] text-white text-3xl font-bold">
+                <AvatarFallback className="bg-gradient-to-br from-[#8B1A1A] to-[#3d0808] text-white text-3xl font-bold">
                   {initials(profile.name)}
                 </AvatarFallback>
               </Avatar>
-            </button>
-          </div>
-
-          {/* Name & Meta */}
-          <div className="pb-2 flex-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-900 leading-tight">{profile.name}</h1>
-              <p className="text-slate-500 mt-0.5 flex items-center gap-2 flex-wrap">
-                <span className="font-medium text-[#8B1A1A]">Actor</span>
-                {profile.location && (
-                  <>
-                    <span className="text-slate-300">�</span>
-                    <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>
-                  </>
-                )}
-              </p>
             </div>
-            <div className="flex gap-2">
-              <Button asChild variant="outline" size="sm" className="gap-1.5">
+          </button>
+
+          {/* Name / meta */}
+          <div className="flex-1 pb-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
+            <div>
+              <div className="flex items-center gap-2 mb-1">
+                <Badge className="bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px] uppercase tracking-widest font-bold px-2">
+                  Actor
+                </Badge>
+                {totalCredits > 0 && (
+                  <Badge className="bg-white/5 text-white/50 border-white/10 text-[10px] uppercase tracking-widest px-2">
+                    {totalCredits} Credits
+                  </Badge>
+                )}
+              </div>
+              <h1 className="text-3xl sm:text-4xl font-bold text-white leading-tight tracking-tight">{profile.name}</h1>
+              <div className="flex items-center gap-3 mt-1.5 flex-wrap">
+                {profile.location && (
+                  <span className="flex items-center gap-1 text-sm text-white/50">
+                    <MapPin size={13} className="text-amber-500/70" />{profile.location}
+                  </span>
+                )}
+                {profile.age && (
+                  <span className="text-sm text-white/50">Age {profile.age}</span>
+                )}
+                {profile.height && (
+                  <span className="text-sm text-white/50">{profile.height}</span>
+                )}
+              </div>
+              {/* Social icons inline */}
+              {socialLinks.length > 0 && (
+                <div className="flex items-center gap-2 mt-3">
+                  {socialLinks.map(({ href, icon: Icon, label, activeColor }) => (
+                    <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                      className={cn('w-8 h-8 rounded-lg border flex items-center justify-center transition-all', activeColor)}
+                      title={label}
+                    >
+                      <Icon size={15} />
+                    </a>
+                  ))}
+                </div>
+              )}
+            </div>
+            <div className="flex gap-2 pb-1">
+              <Button asChild variant="outline" size="sm"
+                className="gap-1.5 border-white/15 text-white/70 hover:text-white hover:border-white/30 bg-white/5 hover:bg-white/10">
                 <Link href="/profile"><Edit3 size={14} /> Edit Profile</Link>
               </Button>
-              <Button asChild size="sm" className="bg-[#8B1A1A] hover:bg-[#5C0808] gap-1.5">
-                <Link href="/feed"><ChevronRight size={14} /> Browse Roles</Link>
+              <Button asChild size="sm" className="bg-amber-500 hover:bg-amber-600 text-black font-semibold gap-1.5 shadow-lg shadow-amber-500/20">
+                <Link href="/feed"><Sparkles size={14} /> Browse Roles</Link>
               </Button>
             </div>
           </div>
         </div>
 
-        {/* Quick Stats */}
-        <div className="grid grid-cols-3 gap-4 mb-8">
-          <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-[#8B1A1A]">{applications.length}</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Applications</p>
-          </Card>
-          <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-amber-600">{shortlisted}</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Shortlisted</p>
-          </Card>
-          <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-amber-500">{Object.values(credits).flat().length}</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Credits</p>
-          </Card>
+        {/* ── Stats Bar ── */}
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          {[
+            { value: applications.length, label: 'Applications', color: 'text-white' },
+            { value: shortlisted, label: 'Shortlisted', color: 'text-amber-400' },
+            { value: totalCredits, label: 'Credits', color: 'text-amber-300' },
+          ].map(({ value, label, color }) => (
+            <div key={label} className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-4 text-center backdrop-blur-sm">
+              <p className={cn('text-3xl font-bold', color)}>{value}</p>
+              <p className="text-[11px] text-white/40 uppercase tracking-widest mt-0.5">{label}</p>
+            </div>
+          ))}
         </div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-4 gap-8 pb-16">
-          {/* -- LEFT SIDEBAR -- */}
-          <div className="lg:col-span-1 space-y-6">
+        {/* ── Two-column layout ── */}
+        <div className="grid grid-cols-1 lg:grid-cols-4 gap-6 pb-20">
+
+          {/* ── LEFT SIDEBAR ── */}
+          <div className="lg:col-span-1 space-y-5">
 
             {/* Appearance */}
-            <Card className="p-5 border-slate-200">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-4">Appearance</h3>
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5">
+              <h3 className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-4">Appearance</h3>
               <div className="space-y-3">
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Playing Age</span>
-                  <span className="text-sm font-semibold text-slate-800">
-                    {profile.age ? `${Math.max(18, profile.age - 5)}�${profile.age + 5}` : '�'}
-                  </span>
-                </div>
-                <Separator />
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Height</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.height ?? '�'}</span>
-                </div>
-                <Separator />
-                <div className="flex justify-between items-center">
-                  <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Age</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.age ?? '�'}</span>
-                </div>
+                {[
+                  { label: 'Age', value: profile.age ? String(profile.age) : null },
+                  { label: 'Height', value: profile.height ?? null },
+                  { label: 'Playing Age', value: profile.age ? `${Math.max(18, profile.age - 5)}–${profile.age + 5}` : null },
+                ].map(({ label, value }) => (
+                  <div key={label}>
+                    <div className="flex justify-between items-center">
+                      <span className="text-[11px] text-white/40 uppercase tracking-wide">{label}</span>
+                      <span className="text-sm font-semibold text-white/80">{value ?? <span className="text-white/20 italic text-xs">not set</span>}</span>
+                    </div>
+                    <Separator className="mt-2 bg-white/[0.06]" />
+                  </div>
+                ))}
               </div>
-              <Button asChild variant="ghost" size="sm" className="w-full mt-4 text-[#8B1A1A] text-xs hover:bg-[#8B1A1A]/5">
-                <Link href="/profile"><Edit3 size={12} className="mr-1" /> Update Appearance</Link>
+              <Button asChild variant="ghost" size="sm" className="w-full mt-4 text-amber-400/70 text-xs hover:text-amber-400 hover:bg-amber-400/5">
+                <Link href="/profile"><Edit3 size={11} className="mr-1" /> Update</Link>
               </Button>
-            </Card>
+            </div>
 
             {/* Languages */}
-            <Card className="p-5 border-slate-200">
-              <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest mb-3">Languages</h3>
-              {profile.languages.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5">
+              <div className="flex items-center gap-2 mb-3">
+                <Languages size={13} className="text-amber-400/60" />
+                <h3 className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Languages</h3>
+              </div>
+              {(profile.languages ?? []).length > 0 ? (
+                <div className="flex flex-wrap gap-1.5">
                   {profile.languages.map((lang) => (
-                    <Badge key={lang} variant="secondary" className="text-xs bg-slate-100 text-slate-700 border-slate-200">{lang}</Badge>
+                    <span key={lang} className="text-xs px-2.5 py-1 rounded-full bg-white/[0.06] border border-white/10 text-white/70">{lang}</span>
                   ))}
                 </div>
               ) : (
-                <p className="text-sm text-slate-400 italic">No languages added</p>
+                <p className="text-xs text-white/25 italic">No languages added</p>
               )}
-              <Button asChild variant="ghost" size="sm" className="w-full mt-3 text-[#8B1A1A] text-xs hover:bg-[#8B1A1A]/5">
-                <Link href="/profile"><Plus size={12} className="mr-1" /> Add Language</Link>
+              <Button asChild variant="ghost" size="sm" className="w-full mt-3 text-amber-400/70 text-xs hover:text-amber-400 hover:bg-amber-400/5">
+                <Link href="/profile"><Plus size={11} className="mr-1" /> Add Language</Link>
               </Button>
-            </Card>
+            </div>
 
-            {/* Applications summary */}
-            <Card className="p-5 border-slate-200">
+            {/* Social Links */}
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5">
+              <h3 className="text-[10px] font-bold text-white/30 uppercase tracking-widest mb-4">Social & Links</h3>
+              {socialLinks.length > 0 ? (
+                <div className="space-y-2">
+                  {socialLinks.map(({ href, icon: Icon, label, activeColor }) => (
+                    <a key={label} href={href} target="_blank" rel="noopener noreferrer"
+                      className={cn('flex items-center gap-3 px-3 py-2.5 rounded-xl border transition-all text-sm font-medium', activeColor)}>
+                      <Icon size={15} />
+                      <span className="truncate text-xs">{label}</span>
+                      <ExternalLink size={11} className="ml-auto opacity-50 flex-shrink-0" />
+                    </a>
+                  ))}
+                </div>
+              ) : (
+                <p className="text-xs text-white/25 italic mb-3">No social links added</p>
+              )}
+              <Button asChild variant="ghost" size="sm" className="w-full mt-3 text-amber-400/70 text-xs hover:text-amber-400 hover:bg-amber-400/5">
+                <Link href="/profile"><Plus size={11} className="mr-1" /> {socialLinks.length > 0 ? 'Edit Links' : 'Add Links'}</Link>
+              </Button>
+            </div>
+
+            {/* Applications */}
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-5">
               <div className="flex items-center justify-between mb-3">
-                <h3 className="text-xs font-bold text-slate-400 uppercase tracking-widest">Applications</h3>
-                <Link href="/feed" className="text-[10px] font-semibold text-[#8B1A1A] flex items-center gap-0.5">
-                  Find more <ChevronRight size={12} />
+                <h3 className="text-[10px] font-bold text-white/30 uppercase tracking-widest">Applications</h3>
+                <Link href="/feed" className="text-[10px] font-semibold text-amber-400/70 hover:text-amber-400 flex items-center gap-0.5">
+                  Find more <ChevronRight size={11} />
                 </Link>
               </div>
               {applications.length === 0 ? (
                 <div className="text-center py-4">
-                  <Briefcase size={24} className="mx-auto text-slate-300 mb-2" />
-                  <p className="text-xs text-slate-400">No applications yet</p>
-                  <Button asChild variant="ghost" size="sm" className="mt-2 text-xs text-[#8B1A1A]">
+                  <Briefcase size={22} className="mx-auto text-white/20 mb-2" />
+                  <p className="text-xs text-white/30">No applications yet</p>
+                  <Button asChild variant="ghost" size="sm" className="mt-2 text-xs text-amber-400/70 hover:text-amber-400">
                     <Link href="/feed">Browse Roles</Link>
                   </Button>
                 </div>
@@ -317,239 +370,213 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                   {applications.slice(0, 4).map((app) => {
                     const call = calls.find((c) => c.id === app.castingCallId);
                     return (
-                      <div key={app.id} className="flex items-center justify-between">
-                        <p className="text-xs text-slate-700 truncate max-w-[130px]">{call?.title ?? 'Unknown Role'}</p>
-                        <Badge className={cn('text-[10px] px-1.5 py-0',
-                          app.status === 'pending' && 'bg-red-50 text-blue-700 border-blue-200',
-                          app.status === 'shortlisted' && 'bg-amber-50 text-amber-800 border-emerald-200',
-                          app.status === 'rejected' && 'bg-red-50 text-red-700 border-red-200',
+                      <div key={app.id} className="flex items-center justify-between gap-2">
+                        <p className="text-xs text-white/60 truncate">{call?.title ?? 'Unknown Role'}</p>
+                        <span className={cn('text-[10px] px-2 py-0.5 rounded-full font-medium flex-shrink-0',
+                          app.status === 'pending' && 'bg-blue-500/20 text-blue-300',
+                          app.status === 'shortlisted' && 'bg-amber-500/20 text-amber-300',
+                          app.status === 'rejected' && 'bg-red-500/20 text-red-300',
                         )}>
                           {app.status}
-                        </Badge>
+                        </span>
                       </div>
                     );
                   })}
                 </div>
               )}
-            </Card>
+            </div>
           </div>
 
-          {/* -- MAIN CONTENT -- */}
-          <div className="lg:col-span-3 space-y-8">
+          {/* ── MAIN CONTENT ── */}
+          <div className="lg:col-span-3 space-y-6">
 
-            {/* Media � Backstage layout: large photo left + 2�2 grid right */}
-            <Card className="p-6 border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Media</h3>
-                <Link href="/profile" className="text-xs text-[#8B1A1A] font-semibold hover:underline flex items-center gap-1">
-                  <Edit3 size={12} /> Edit
+            {/* Media */}
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-5">
+                <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Media</h3>
+                <Link href="/profile" className="text-xs text-amber-400/70 hover:text-amber-400 font-semibold flex items-center gap-1">
+                  <Edit3 size={11} /> Manage
                 </Link>
               </div>
 
               {(() => {
                 const photos = profile.photos ?? [];
                 const hasVideo = !!profile.video_reel;
-                const hasAnyMedia = photos.length > 0 || hasVideo;
-
-                // Build grid items: video first, then photos
-                const gridItems: Array<{ type: 'video' | 'photo'; url: string; label?: string }> = [];
-                if (hasVideo) gridItems.push({ type: 'video', url: profile.video_reel!, label: 'Acting Reel' });
-                photos.forEach((url) => gridItems.push({ type: 'photo', url }));
-
-                if (!hasAnyMedia) {
+                if (photos.length === 0 && !hasVideo) {
                   return (
-                    <div className="border-2 border-dashed border-slate-200 rounded-xl p-12 text-center">
-                      <Camera size={32} className="mx-auto text-slate-300 mb-3" />
-                      <p className="text-sm font-medium text-slate-700 mb-1">No media yet</p>
-                      <p className="text-xs text-slate-400 mb-4">Add photos and a video reel to your profile</p>
-                      <Button asChild variant="outline" size="sm" className="gap-1.5 text-[#8B1A1A] border-[#8B1A1A]/30">
-                        <Link href="/profile"><Plus size={14} /> Add Media</Link>
+                    <div className="border border-dashed border-white/10 rounded-xl p-12 text-center">
+                      <div className="w-14 h-14 rounded-full bg-white/5 flex items-center justify-center mx-auto mb-3">
+                        <Clapperboard size={24} className="text-white/20" />
+                      </div>
+                      <p className="text-sm font-medium text-white/40 mb-1">No media yet</p>
+                      <p className="text-xs text-white/20 mb-4">Add photos and a video reel to your profile</p>
+                      <Button asChild variant="outline" size="sm"
+                        className="gap-1.5 border-amber-500/30 text-amber-400/70 hover:text-amber-400 hover:border-amber-500/60 bg-transparent">
+                        <Link href="/profile"><Plus size={13} /> Add Media</Link>
                       </Button>
                     </div>
                   );
                 }
 
                 const featuredPhoto = photos[0];
-                const remainingItems = featuredPhoto
-                  ? [hasVideo && { type: 'video' as const, url: profile.video_reel!, label: 'Acting Reel' }, ...photos.slice(1).map((url) => ({ type: 'photo' as const, url }))].filter(Boolean)
-                  : gridItems;
+                const gridItems: Array<{ type: 'video' | 'photo'; url: string; label?: string }> = [];
+                if (hasVideo) gridItems.push({ type: 'video', url: profile.video_reel!, label: 'Acting Reel' });
+                photos.slice(1).forEach((url) => gridItems.push({ type: 'photo', url }));
+                if (!featuredPhoto && hasVideo) {
+                  gridItems.shift();
+                }
 
                 return (
-                  <div>
-                    <div className="flex gap-3">
-                      {/* Left � large featured photo */}
-                      {featuredPhoto ? (
-                        <button
-                          onClick={() => openLightbox(featuredPhoto)}
-                          className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 cursor-zoom-in"
-                          style={{ aspectRatio: '2/3' }}
-                        >
-                          {/* eslint-disable-next-line @next/next/no-img-element */}
-                          <img src={featuredPhoto} alt="Featured" className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
-                        </button>
-                      ) : (
-                        <button
-                          onClick={() => openLightbox(profile.video_reel!)}
-                          className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video relative group"
-                        >
-                          <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition-colors z-10">
-                            <div className="w-14 h-14 rounded-full bg-white/90 flex items-center justify-center shadow-xl">
-                              <Play size={22} className="text-slate-900 ml-1" fill="currentColor" />
-                            </div>
+                  <div className="flex gap-3">
+                    {/* Large featured */}
+                    {featuredPhoto ? (
+                      <button onClick={() => openLightbox(featuredPhoto)}
+                        className="flex-shrink-0 w-[42%] rounded-xl overflow-hidden border border-white/10 bg-black cursor-zoom-in group"
+                        style={{ aspectRatio: '2/3' }}>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img src={featuredPhoto} alt="Featured" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
+                      </button>
+                    ) : hasVideo ? (
+                      <button onClick={() => openLightbox(profile.video_reel!)}
+                        className="flex-shrink-0 w-[42%] rounded-xl overflow-hidden border border-white/10 bg-black relative group"
+                        style={{ aspectRatio: '2/3' }}>
+                        <div className="absolute inset-0 flex items-center justify-center bg-gradient-to-br from-[#8B1A1A]/40 to-black/60 group-hover:from-[#8B1A1A]/60 transition-colors z-10">
+                          <div className="w-14 h-14 rounded-full bg-white/15 border border-white/20 backdrop-blur-sm flex items-center justify-center shadow-xl group-hover:scale-110 transition-transform">
+                            <Play size={22} className="text-white ml-1" fill="currentColor" />
                           </div>
-                          <span className="absolute bottom-3 left-3 text-white text-xs font-semibold z-10">Acting Reel</span>
-                        </button>
-                      )}
+                        </div>
+                        <span className="absolute bottom-3 left-3 text-white/80 text-xs font-semibold z-10 bg-black/40 px-2 py-0.5 rounded-md">Acting Reel</span>
+                      </button>
+                    ) : null}
 
-                      {/* Right � 2�2 grid */}
-                      <div className="flex-1 grid grid-cols-2 gap-2">
-                        {(remainingItems as Array<{ type: 'video' | 'photo'; url: string; label?: string }>).slice(0, 4).map((item, i) => (
-                          <button
-                            key={i}
-                            onClick={() => openLightbox(item.url)}
-                            className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-square group cursor-pointer"
-                          >
-                            {item.type === 'video' ? (
+                    {/* Grid */}
+                    <div className="flex-1 grid grid-cols-2 gap-2">
+                      {(featuredPhoto ? [hasVideo && { type: 'video' as const, url: profile.video_reel!, label: 'Acting Reel' }, ...photos.slice(1).map((url) => ({ type: 'photo' as const, url }))].filter(Boolean) : gridItems).slice(0, 4).map((item, i) => {
+                        const it = item as { type: 'video' | 'photo'; url: string; label?: string };
+                        return (
+                          <button key={i} onClick={() => openLightbox(it.url)}
+                            className="relative rounded-xl overflow-hidden border border-white/10 bg-black aspect-square group cursor-pointer">
+                            {it.type === 'video' ? (
                               <>
-                                <div className="absolute inset-0 bg-slate-800 flex items-center justify-center">
-                                  <div className="w-10 h-10 rounded-full bg-white/90 flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                                    <Play size={16} className="text-slate-900 ml-0.5" fill="currentColor" />
+                                <div className="absolute inset-0 bg-gradient-to-br from-[#8B1A1A]/30 to-black/60 flex items-center justify-center">
+                                  <div className="w-9 h-9 rounded-full bg-white/15 border border-white/20 flex items-center justify-center group-hover:scale-110 transition-transform">
+                                    <Play size={14} className="text-white ml-0.5" fill="currentColor" />
                                   </div>
                                 </div>
-                                {item.label && (
-                                  <span className="absolute bottom-2 left-2 right-2 text-white text-[10px] font-semibold truncate text-left">{item.label}</span>
-                                )}
+                                {it.label && <span className="absolute bottom-2 left-2 text-white/70 text-[10px] font-medium">{it.label}</span>}
                               </>
                             ) : (
                               // eslint-disable-next-line @next/next/no-img-element
-                              <img src={item.url} alt="Media" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" />
+                              <img src={it.url} alt="Media" className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500" />
                             )}
                           </button>
-                        ))}
-                        {/* Empty add slots */}
-                        {Array.from({ length: Math.max(0, 4 - (remainingItems as unknown[]).length) }).map((_, i) => (
-                          <Link key={`add-${i}`} href="/profile" className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-300 hover:border-[#8B1A1A] hover:text-[#8B1A1A] transition-colors">
-                            <Plus size={16} />
-                            <span className="text-[10px] font-medium">Add</span>
-                          </Link>
-                        ))}
-                      </div>
-                    </div>
-
-                    {/* View More / Add More */}
-                    <div className="mt-3 text-center">
-                      <Link href="/profile" className="text-xs text-slate-500 hover:text-[#8B1A1A] font-medium flex items-center justify-center gap-1">
-                        <ChevronRight size={14} /> View &amp; Manage Media
-                      </Link>
+                        );
+                      })}
+                      {Array.from({ length: Math.max(0, 4 - (featuredPhoto ? [hasVideo, ...photos.slice(1)].filter(Boolean).length : gridItems.length)) }).map((_, i) => (
+                        <Link key={`add-${i}`} href="/profile"
+                          className="aspect-square rounded-xl border border-dashed border-white/10 flex flex-col items-center justify-center gap-1 text-white/20 hover:border-amber-500/30 hover:text-amber-400/60 transition-colors">
+                          <Plus size={16} />
+                          <span className="text-[10px] font-medium">Add</span>
+                        </Link>
+                      ))}
                     </div>
                   </div>
                 );
               })()}
-            </Card>
+            </div>
 
-            {/* Credits & Experience */}
-            <Card className="p-6 border-slate-200">
-              <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4">Credits &amp; Experience</h3>
+            {/* Skills */}
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-6">
+              <div className="flex items-center justify-between mb-4">
+                <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Skills</h3>
+                <Button asChild variant="ghost" size="sm" className="text-xs text-amber-400/70 gap-1 hover:text-amber-400 hover:bg-amber-400/5">
+                  <Link href="/profile"><Plus size={11} /> Add Skill</Link>
+                </Button>
+              </div>
+              {(profile.skills ?? []).length > 0 ? (
+                <div className="flex flex-wrap gap-2">
+                  {profile.skills.map((skill) => (
+                    <span key={skill}
+                      className="text-sm px-3.5 py-1.5 rounded-full border border-white/10 bg-white/[0.04] text-white/70 hover:border-amber-500/30 hover:text-amber-400 transition-colors cursor-default">
+                      {skill}
+                    </span>
+                  ))}
+                </div>
+              ) : (
+                <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
+                  <p className="text-sm text-white/30 mb-1">No skills added yet</p>
+                  <p className="text-xs text-white/15">e.g. Acting Techniques, Guitar, Bharatanatyam, Dubbing</p>
+                </div>
+              )}
+            </div>
+
+            {/* Credits */}
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-6">
+              <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest mb-5">Credits &amp; Experience</h3>
               <Tabs defaultValue="television">
-                <TabsList className="flex flex-wrap h-auto gap-1 bg-slate-100/80 p-1 rounded-lg mb-5">
+                <TabsList className="flex flex-wrap h-auto gap-1 bg-white/[0.04] border border-white/[0.06] p-1 rounded-xl mb-5">
                   {CREDIT_TABS.map(({ value, label, icon: Icon }) => (
-                    <TabsTrigger key={value} value={value} className="flex items-center gap-1.5 text-xs data-[state=active]:bg-white data-[state=active]:text-[#8B1A1A] data-[state=active]:shadow-sm">
-                      <Icon size={12} />{label}
+                    <TabsTrigger key={value} value={value}
+                      className="flex items-center gap-1.5 text-xs text-white/40 data-[state=active]:bg-[#8B1A1A] data-[state=active]:text-white data-[state=active]:shadow-sm rounded-lg">
+                      <Icon size={11} />{label}
                       {credits[value].length > 0 && (
-                        <span className="ml-1 bg-[#8B1A1A] text-white rounded-full text-[10px] w-4 h-4 flex items-center justify-center">
+                        <span className="ml-1 bg-amber-400 text-black rounded-full text-[9px] w-3.5 h-3.5 flex items-center justify-center font-bold">
                           {credits[value].length}
                         </span>
                       )}
                     </TabsTrigger>
                   ))}
                 </TabsList>
-
                 {CREDIT_TABS.map(({ value, label }) => (
                   <TabsContent key={value} value={value}>
                     {credits[value].length > 0 ? (
                       <div className="mb-4">
-                        <div className="grid grid-cols-12 gap-2 pb-2 border-b border-slate-100 mb-2">
-                          <span className="col-span-1 text-[10px] font-bold text-slate-400 uppercase">Year</span>
-                          <span className="col-span-3 text-[10px] font-bold text-slate-400 uppercase">Role</span>
-                          <span className="col-span-4 text-[10px] font-bold text-slate-400 uppercase">Production</span>
-                          <span className="col-span-2 text-[10px] font-bold text-slate-400 uppercase">Director</span>
-                          <span className="col-span-2 text-[10px] font-bold text-slate-400 uppercase">Location</span>
+                        <div className="grid grid-cols-12 gap-2 pb-2 border-b border-white/[0.06] mb-1">
+                          {['Year', 'Role', 'Production', 'Director', 'Location'].map((h, i) => (
+                            <span key={h} className={cn('text-[10px] font-bold text-white/20 uppercase',
+                              i === 0 && 'col-span-1', i === 1 && 'col-span-3', i === 2 && 'col-span-4', i === 3 && 'col-span-2', i === 4 && 'col-span-2'
+                            )}>{h}</span>
+                          ))}
                         </div>
                         {credits[value].map((c) => (
-                          <div key={c.id} className="grid grid-cols-12 gap-2 py-2.5 border-b border-slate-50 hover:bg-slate-50/80 rounded-lg px-1 transition-colors">
-                            <span className="col-span-1 text-xs text-slate-500">{c.year}</span>
-                            <span className="col-span-3 text-xs font-semibold text-slate-800">{c.role}</span>
-                            <span className="col-span-4 text-xs text-slate-600">{c.production}</span>
-                            <span className="col-span-2 text-xs text-slate-500">{c.director}</span>
-                            <span className="col-span-2 text-xs text-slate-400">{c.location}</span>
+                          <div key={c.id} className="grid grid-cols-12 gap-2 py-2.5 border-b border-white/[0.04] hover:bg-white/[0.03] rounded-lg px-1 transition-colors">
+                            <span className="col-span-1 text-xs text-white/40">{c.year}</span>
+                            <span className="col-span-3 text-xs font-semibold text-white/80">{c.role}</span>
+                            <span className="col-span-4 text-xs text-white/60">{c.production}</span>
+                            <span className="col-span-2 text-xs text-white/40">{c.director}</span>
+                            <span className="col-span-2 text-xs text-white/30">{c.location}</span>
                           </div>
                         ))}
                       </div>
                     ) : (
                       <div className="py-8 text-center">
-                        <p className="text-sm text-slate-400 mb-3">No {label} credits yet</p>
+                        <p className="text-sm text-white/25 mb-3">No {label} credits yet</p>
                       </div>
                     )}
                     <AddCreditDialog category={label} onAdd={(c) => addCredit(value, c)} />
                   </TabsContent>
                 ))}
               </Tabs>
-            </Card>
+            </div>
 
-            {/* Skills */}
-            <Card className="p-6 border-slate-200">
+            {/* Education */}
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Skills</h3>
-                <Button asChild variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
-                  <Link href="/profile"><Plus size={12} /> Add Skill</Link>
-                </Button>
-              </div>
-              {profile.skills.length > 0 ? (
-                <div className="flex flex-wrap gap-2">
-                  {profile.skills.map((skill) => (
-                    <Badge key={skill} variant="outline" className="text-sm px-3 py-1 border-slate-200 text-slate-700 bg-white hover:border-[#8B1A1A]/30 hover:text-[#8B1A1A] transition-colors cursor-default">
-                      {skill}
-                    </Badge>
-                  ))}
-                </div>
-              ) : (
-                <div className="py-6 text-center border-2 border-dashed border-slate-200 rounded-xl">
-                  <p className="text-sm text-slate-400 mb-2">No skills added yet</p>
-                  <p className="text-xs text-slate-300">e.g. Acting Techniques, Guitar, Bharatanatyam, Dubbing</p>
-                </div>
-              )}
-            </Card>
-
-            {/* Education & Training */}
-            <Card className="p-6 border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Education &amp; Training</h3>
+                <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Education &amp; Training</h3>
                 <Dialog open={showEduDialog} onOpenChange={setShowEduDialog}>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
-                      <Plus size={12} /> Add
+                    <Button variant="ghost" size="sm" className="text-xs text-amber-400/70 gap-1 hover:text-amber-400 hover:bg-amber-400/5">
+                      <Plus size={11} /> Add
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
                     <DialogHeader><DialogTitle>Add Education / Training</DialogTitle></DialogHeader>
                     <form onSubmit={addEducation} className="space-y-3 pt-2">
                       <div className="grid grid-cols-2 gap-3">
-                        <div>
-                          <Label className="text-xs mb-1">Year</Label>
-                          <Input name="year" placeholder="2022" required />
-                        </div>
-                        <div>
-                          <Label className="text-xs mb-1">Degree / Course</Label>
-                          <Input name="degree" placeholder="Acting Diploma" required />
-                        </div>
-                        <div className="col-span-2">
-                          <Label className="text-xs mb-1">Institution</Label>
-                          <Input name="institution" placeholder="Film & TV Institute" required />
-                        </div>
-                        <div className="col-span-2">
-                          <Label className="text-xs mb-1">Trainer / Professor</Label>
-                          <Input name="trainer" placeholder="Name of trainer" />
-                        </div>
+                        <div><Label className="text-xs mb-1">Year</Label><Input name="year" placeholder="2022" required /></div>
+                        <div><Label className="text-xs mb-1">Degree / Course</Label><Input name="degree" placeholder="Acting Diploma" required /></div>
+                        <div className="col-span-2"><Label className="text-xs mb-1">Institution</Label><Input name="institution" placeholder="Film & TV Institute" required /></div>
+                        <div className="col-span-2"><Label className="text-xs mb-1">Trainer / Professor</Label><Input name="trainer" placeholder="Name of trainer" /></div>
                       </div>
                       <div className="flex gap-3 pt-2">
                         <Button type="button" variant="ghost" className="flex-1" onClick={() => setShowEduDialog(false)}>Cancel</Button>
@@ -562,34 +589,34 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               {educations.length > 0 ? (
                 <div className="space-y-3">
                   {educations.map((edu) => (
-                    <div key={edu.id} className="flex gap-4 py-3 border-b border-slate-100 last:border-0">
-                      <div className="flex-shrink-0 w-10 h-10 rounded-lg bg-[#8B1A1A]/10 flex items-center justify-center">
-                        <GraduationCap size={18} className="text-[#8B1A1A]" />
+                    <div key={edu.id} className="flex gap-4 py-3 border-b border-white/[0.05] last:border-0">
+                      <div className="flex-shrink-0 w-10 h-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center">
+                        <GraduationCap size={16} className="text-amber-400/70" />
                       </div>
                       <div>
-                        <p className="text-sm font-semibold text-slate-800">{edu.degree}</p>
-                        <p className="text-xs text-slate-500">{edu.institution}{edu.trainer ? ` � ${edu.trainer}` : ''}</p>
-                        <p className="text-xs text-slate-400 mt-0.5">{edu.year}</p>
+                        <p className="text-sm font-semibold text-white/80">{edu.degree}</p>
+                        <p className="text-xs text-white/40">{edu.institution}{edu.trainer ? ` · ${edu.trainer}` : ''}</p>
+                        <p className="text-xs text-white/25 mt-0.5">{edu.year}</p>
                       </div>
                     </div>
                   ))}
                 </div>
               ) : (
-                <div className="py-6 text-center border-2 border-dashed border-slate-200 rounded-xl">
-                  <GraduationCap size={28} className="mx-auto text-slate-300 mb-2" />
-                  <p className="text-sm text-slate-400">Add your acting training and education</p>
+                <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
+                  <GraduationCap size={26} className="mx-auto text-white/15 mb-2" />
+                  <p className="text-sm text-white/30">Add your acting training and education</p>
                 </div>
               )}
-            </Card>
+            </div>
 
             {/* Highlights */}
-            <Card className="p-6 border-slate-200">
+            <div className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Highlights</h3>
+                <h3 className="text-xs font-bold text-white/40 uppercase tracking-widest">Highlights &amp; Awards</h3>
                 <Dialog open={showHighlightDialog} onOpenChange={setShowHighlightDialog}>
                   <DialogTrigger asChild>
-                    <Button variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
-                      <Plus size={12} /> Add
+                    <Button variant="ghost" size="sm" className="text-xs text-amber-400/70 gap-1 hover:text-amber-400 hover:bg-amber-400/5">
+                      <Plus size={11} /> Add
                     </Button>
                   </DialogTrigger>
                   <DialogContent className="sm:max-w-md">
@@ -610,116 +637,59 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               {highlights.length > 0 ? (
                 <ul className="space-y-2">
                   {highlights.map((h) => (
-                    <li key={h.id} className="flex gap-2 text-sm text-slate-700">
-                      <Star size={14} className="text-amber-400 mt-0.5 flex-shrink-0" />
-                      {h.text}
+                    <li key={h.id} className="flex gap-3 items-start">
+                      <Award size={14} className="text-amber-400/70 mt-0.5 flex-shrink-0" />
+                      <span className="text-sm text-white/70">{h.text}</span>
                     </li>
                   ))}
                 </ul>
               ) : (
-                <div className="py-6 text-center border-2 border-dashed border-slate-200 rounded-xl">
-                  <Star size={28} className="mx-auto text-slate-300 mb-2" />
-                  <p className="text-sm text-slate-400">Add awards, festival selections, or notable achievements</p>
+                <div className="py-8 text-center border border-dashed border-white/10 rounded-xl">
+                  <Award size={26} className="mx-auto text-white/15 mb-2" />
+                  <p className="text-sm text-white/30">Add awards, festival selections, or notable achievements</p>
                 </div>
               )}
-            </Card>
-
-            {/* Social Media / Websites */}
-            <Card className="p-6 border-slate-200">
-              <div className="flex items-center justify-between mb-4">
-                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Social Media &amp; Websites</h3>
-                <Button asChild variant="ghost" size="sm" className="text-xs text-[#8B1A1A] gap-1 hover:bg-[#8B1A1A]/5">
-                  <Link href="/profile"><Plus size={12} /> Add Link</Link>
-                </Button>
-              </div>
-              <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-                {[
-                  { icon: Instagram, label: 'Instagram', color: 'hover:border-pink-300 hover:text-pink-600' },
-                  { icon: Youtube, label: 'YouTube', color: 'hover:border-red-300 hover:text-red-600' },
-                  { icon: Globe, label: 'Website', color: 'hover:border-blue-300 hover:text-blue-600' },
-                  { icon: ExternalLink, label: 'IMDB', color: 'hover:border-amber-300 hover:text-amber-600' },
-                ].map(({ icon: Icon, label, color }) => (
-                  <Link key={label} href="/profile" className={cn(
-                    'flex flex-col items-center gap-2 p-4 rounded-xl border border-slate-200 text-slate-400 transition-all',
-                    color,
-                  )}>
-                    <Icon size={20} />
-                    <span className="text-xs font-medium">{label}</span>
-                  </Link>
-                ))}
-              </div>
-            </Card>
+            </div>
 
           </div>
         </div>
       </div>
 
-      {/* Lightbox */}
+      {/* ── Lightbox ── */}
       {currentMedia && (
-        <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/92 p-4"
-          onClick={closeLightbox}
-        >
-          {/* Close */}
-          <button
-            onClick={closeLightbox}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-lg transition-colors z-10"
-          >
-            ?
+        <div className="fixed inset-0 z-[200] flex items-center justify-center bg-black/95 p-4" onClick={closeLightbox}>
+          <button onClick={closeLightbox}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors z-10">
+            <X size={18} />
           </button>
-
-          {/* Counter */}
           {mediaItems.length > 1 && (
-            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs font-medium px-3 py-1 rounded-full">
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/60 text-white/70 text-xs font-medium px-3 py-1 rounded-full">
               {(lightboxIndex ?? 0) + 1} / {mediaItems.length}
             </div>
           )}
-
-          {/* Prev */}
           {mediaItems.length > 1 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); prevMedia(); }}
-              className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
-            >
-              �
+            <button onClick={(e) => { e.stopPropagation(); prevMedia(); }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-xl transition-colors z-10">
+              ‹
             </button>
           )}
-
-          {/* Media */}
-          <div
-            className="relative max-w-4xl w-full"
-            onClick={(e) => e.stopPropagation()}
-          >
+          <div className="relative max-w-4xl w-full" onClick={(e) => e.stopPropagation()}>
             {currentMedia.type === 'photo' ? (
               // eslint-disable-next-line @next/next/no-img-element
-              <img
-                src={currentMedia.url}
-                alt="Full photo"
-                className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
-              />
+              <img src={currentMedia.url} alt="Full photo" className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl" />
             ) : (
               <div className="aspect-video w-full rounded-xl overflow-hidden shadow-2xl">
-                <iframe
-                  src={`${toEmbedUrl(currentMedia.url)}?autoplay=1`}
-                  className="w-full h-full"
+                <iframe src={`${toEmbedUrl(currentMedia.url)}?autoplay=1`} className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                  allowFullScreen
-                  title={currentMedia.label ?? 'Video'}
-                />
+                  allowFullScreen title={currentMedia.label ?? 'Video'} />
               </div>
             )}
-            {currentMedia.label && (
-              <p className="text-center text-white/70 text-sm mt-3">{currentMedia.label}</p>
-            )}
+            {currentMedia.label && <p className="text-center text-white/40 text-sm mt-3">{currentMedia.label}</p>}
           </div>
-
-          {/* Next */}
           {mediaItems.length > 1 && (
-            <button
-              onClick={(e) => { e.stopPropagation(); nextMedia(); }}
-              className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
-            >
-              �
+            <button onClick={(e) => { e.stopPropagation(); nextMedia(); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white text-xl transition-colors z-10">
+              ›
             </button>
           )}
         </div>
@@ -754,99 +724,100 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
   };
 
   return (
-    <div className="min-h-screen bg-slate-50">
+    <div className="min-h-screen bg-[#0a0a0a]">
       {/* Banner */}
-      <div className="h-40 bg-gradient-to-br from-[#0D0000] via-[#8B1A1A] to-[#1a0505]" />
+      <div className="relative h-48 overflow-hidden">
+        <div className="absolute inset-0 bg-gradient-to-br from-[#0D0000] via-[#2a0808] to-[#0D0000]" />
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[500px] h-[160px] rounded-full opacity-15"
+          style={{ background: 'radial-gradient(ellipse, #f59e0b 0%, transparent 70%)', filter: 'blur(40px)' }} />
+        <Clapperboard size={100} className="absolute right-10 top-1/2 -translate-y-1/2 text-white/[0.04]" />
+      </div>
 
-      <div className="max-w-6xl mx-auto px-6">
+      <div className="max-w-6xl mx-auto px-4 sm:px-6">
         {/* Company Header */}
-        <div className="relative -mt-16 mb-8 flex flex-col sm:flex-row sm:items-end gap-4">
-          <div className="relative w-32 h-32 flex-shrink-0">
-            <Avatar className="w-32 h-32 border-4 border-white shadow-xl">
-              <AvatarFallback className="bg-amber-800 text-white text-3xl font-bold">
+        <div className="relative -mt-16 mb-8 flex flex-col sm:flex-row sm:items-end gap-5">
+          <div className="relative flex-shrink-0">
+            <div className="absolute -inset-1 rounded-full bg-gradient-to-br from-amber-600 to-[#8B1A1A] opacity-70 blur-sm" />
+            <Avatar className="relative w-28 h-28 border-4 border-[#0a0a0a] shadow-2xl">
+              <AvatarFallback className="bg-gradient-to-br from-amber-800 to-[#3d0808] text-white text-3xl font-bold">
                 {initials(profile.company_name ?? profile.name)}
               </AvatarFallback>
             </Avatar>
           </div>
-          <div className="pb-2 flex-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-3">
+          <div className="pb-1 flex-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
-              <h1 className="text-3xl font-bold text-slate-900">{profile.company_name ?? profile.name}</h1>
-              <p className="text-slate-500 mt-0.5 flex items-center gap-2">
-                <span className="font-medium text-amber-800">Casting Director / Recruiter</span>
-                {profile.location && (
-                  <>
-                    <span className="text-slate-300">�</span>
-                    <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>
-                  </>
-                )}
+              <Badge className="mb-1 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px] uppercase tracking-widest font-bold px-2">
+                Recruiter
+              </Badge>
+              <h1 className="text-3xl font-bold text-white">{profile.company_name ?? profile.name}</h1>
+              <p className="text-white/40 text-sm mt-0.5 flex items-center gap-2">
+                Casting Director / Recruiter
+                {profile.location && <><span className="text-white/20">·</span><span className="flex items-center gap-1"><MapPin size={12} />{profile.location}</span></>}
               </p>
             </div>
-            <Button onClick={() => setShowCreateModal(true)} className="bg-[#8B1A1A] hover:bg-[#5C0808] gap-2 shadow-lg">
+            <Button onClick={() => setShowCreateModal(true)} className="bg-amber-500 hover:bg-amber-600 text-black font-semibold gap-2 shadow-lg shadow-amber-500/20">
               <Plus size={16} /> Post Casting Call
             </Button>
           </div>
         </div>
 
         {/* Stats */}
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-4 mb-8">
-          <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-[#8B1A1A]">{myPosts.length}</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Active Posts</p>
-          </Card>
-          <Card className="p-4 text-center border-slate-200">
-            <p className="text-2xl font-bold text-amber-600">0</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Total Applicants</p>
-          </Card>
-          <Card className="p-4 text-center border-slate-200 sm:col-span-1 col-span-2">
-            <p className="text-2xl font-bold text-amber-500">0</p>
-            <p className="text-xs text-slate-400 uppercase tracking-wider mt-0.5">Shortlisted</p>
-          </Card>
+        <div className="grid grid-cols-3 gap-3 mb-8">
+          {[
+            { value: myPosts.length, label: 'Active Posts', color: 'text-white' },
+            { value: 0, label: 'Total Applicants', color: 'text-amber-400' },
+            { value: 0, label: 'Shortlisted', color: 'text-amber-300' },
+          ].map(({ value, label, color }) => (
+            <div key={label} className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-4 text-center">
+              <p className={cn('text-3xl font-bold', color)}>{value}</p>
+              <p className="text-[11px] text-white/30 uppercase tracking-widest mt-0.5">{label}</p>
+            </div>
+          ))}
         </div>
 
         {/* Casting Calls */}
-        <div className="pb-16">
+        <div className="pb-20">
           <div className="flex items-center justify-between mb-4">
-            <h2 className="text-sm font-bold text-slate-800 uppercase tracking-widest">Your Casting Calls</h2>
-            <Button asChild variant="ghost" size="sm" className="text-xs text-[#8B1A1A]">
-              <Link href="/feed">View Feed <ChevronRight size={13} /></Link>
-            </Button>
+            <h2 className="text-xs font-bold text-white/40 uppercase tracking-widest">Your Casting Calls</h2>
+            <Link href="/feed" className="text-xs text-amber-400/70 hover:text-amber-400 flex items-center gap-1 font-medium">
+              View Feed <ChevronRight size={13} />
+            </Link>
           </div>
 
           {myPosts.length === 0 ? (
-            <Card className="p-16 text-center border-2 border-dashed border-slate-200 bg-white">
-              <div className="w-16 h-16 rounded-full bg-slate-100 flex items-center justify-center mx-auto mb-4">
-                <Briefcase size={28} className="text-slate-300" />
+            <div className="bg-white/[0.04] border border-dashed border-white/10 rounded-2xl p-16 text-center">
+              <div className="w-16 h-16 rounded-full bg-white/[0.04] border border-white/10 flex items-center justify-center mx-auto mb-4">
+                <Briefcase size={26} className="text-white/20" />
               </div>
-              <p className="text-slate-600 font-medium mb-1">No casting calls posted yet</p>
-              <p className="text-sm text-slate-400 mb-4">Start posting to find the perfect talent for your production</p>
+              <p className="text-white/50 font-medium mb-1">No casting calls posted yet</p>
+              <p className="text-sm text-white/25 mb-5">Start posting to find the perfect talent for your production</p>
               <Button onClick={() => setShowCreateModal(true)} className="bg-[#8B1A1A] hover:bg-[#5C0808] gap-2">
                 <Plus size={16} /> Post Your First Casting Call
               </Button>
-            </Card>
+            </div>
           ) : (
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               {myPosts.map((call) => (
-                <Card key={call.id} className="p-6 border-slate-200 hover:shadow-md transition-shadow">
+                <div key={call.id} className="bg-white/[0.04] border border-white/[0.07] rounded-2xl p-6 hover:border-white/15 transition-colors">
                   <div className="flex items-start justify-between mb-3">
                     <div className="flex-1 min-w-0">
-                      <h4 className="text-base font-bold text-slate-900 truncate">{call.title}</h4>
-                      <p className="text-sm text-slate-500 flex items-center gap-1 mt-0.5">
-                        <MapPin size={12} />{call.location}
-                      </p>
+                      <h4 className="text-base font-bold text-white/90 truncate">{call.title}</h4>
+                      <p className="text-sm text-white/40 flex items-center gap-1 mt-0.5"><MapPin size={11} />{call.location}</p>
                     </div>
-                    <Badge className="ml-3 bg-amber-50 text-amber-800 border-emerald-200 text-xs flex-shrink-0">Active</Badge>
+                    <span className="ml-3 text-[10px] px-2 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium flex-shrink-0">Active</span>
                   </div>
-                  <p className="text-xs text-slate-500 line-clamp-2 mb-4">{call.roleDescription}</p>
+                  <p className="text-xs text-white/40 line-clamp-2 mb-4">{call.roleDescription}</p>
                   <div className="flex items-center justify-between">
-                    <div className="flex gap-3 text-xs text-slate-400">
+                    <div className="flex gap-3 text-xs text-white/30">
                       <span>Age: {call.ageRange}</span>
-                      {call.budget && <span>� {call.budget}</span>}
+                      {call.budget && <span>· {call.budget}</span>}
                     </div>
-                    <Button asChild variant="outline" size="sm" className="text-xs border-[#8B1A1A]/30 text-[#8B1A1A] hover:bg-[#8B1A1A]/5">
-                      <Link href={`/applicants/${call.id}`}>View Applicants <ChevronRight size={12} /></Link>
+                    <Button asChild variant="outline" size="sm"
+                      className="text-xs border-white/15 text-white/60 hover:text-white hover:border-white/30 bg-transparent">
+                      <Link href={`/applicants/${call.id}`}>View Applicants <ChevronRight size={11} /></Link>
                     </Button>
                   </div>
-                </Card>
+                </div>
               ))}
             </div>
           )}
@@ -856,40 +827,19 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
       {/* Create Modal */}
       {showCreateModal && (
         <div className="fixed inset-0 z-[100] flex items-center justify-center p-6">
-          <div className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
+          <div className="absolute inset-0 bg-black/70 backdrop-blur-sm" onClick={() => setShowCreateModal(false)} />
           <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
             <Card className="p-8 shadow-2xl">
               <h2 className="text-2xl font-bold text-slate-900 mb-6">Create New Casting Call</h2>
               <form className="space-y-4" onSubmit={handleCreateCall}>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  <div className="md:col-span-2">
-                    <Label htmlFor="title" className="mb-1">Title</Label>
-                    <Input id="title" name="title" required placeholder="e.g. Lead Hero for Feature Film" />
-                  </div>
-                  <div>
-                    <Label htmlFor="location" className="mb-1">Location</Label>
-                    <Input id="location" name="location" required placeholder="Hyderabad" />
-                  </div>
-                  <div>
-                    <Label htmlFor="budget" className="mb-1">Budget</Label>
-                    <Input id="budget" name="budget" placeholder="?50k � ?1L" />
-                  </div>
-                  <div>
-                    <Label htmlFor="ageRange" className="mb-1">Age Range</Label>
-                    <Input id="ageRange" name="ageRange" required placeholder="18�25" />
-                  </div>
-                  <div>
-                    <Label htmlFor="deadline" className="mb-1">Deadline</Label>
-                    <Input id="deadline" name="deadline" type="date" required />
-                  </div>
-                  <div className="md:col-span-2">
-                    <Label htmlFor="roleDescription" className="mb-1">Role Description</Label>
-                    <Textarea id="roleDescription" name="roleDescription" required rows={2} />
-                  </div>
-                  <div className="md:col-span-2">
-                    <Label htmlFor="description" className="mb-1">Overall Project Description</Label>
-                    <Textarea id="description" name="description" required rows={3} />
-                  </div>
+                  <div className="md:col-span-2"><Label htmlFor="title" className="mb-1">Title</Label><Input id="title" name="title" required placeholder="e.g. Lead Hero for Feature Film" /></div>
+                  <div><Label htmlFor="location" className="mb-1">Location</Label><Input id="location" name="location" required placeholder="Hyderabad" /></div>
+                  <div><Label htmlFor="budget" className="mb-1">Budget</Label><Input id="budget" name="budget" placeholder="₹50k – ₹1L" /></div>
+                  <div><Label htmlFor="ageRange" className="mb-1">Age Range</Label><Input id="ageRange" name="ageRange" required placeholder="18–25" /></div>
+                  <div><Label htmlFor="deadline" className="mb-1">Deadline</Label><Input id="deadline" name="deadline" type="date" required /></div>
+                  <div className="md:col-span-2"><Label htmlFor="roleDescription" className="mb-1">Role Description</Label><Textarea id="roleDescription" name="roleDescription" required rows={2} /></div>
+                  <div className="md:col-span-2"><Label htmlFor="description" className="mb-1">Overall Project Description</Label><Textarea id="description" name="description" required rows={3} /></div>
                 </div>
                 <div className="flex gap-4 pt-4">
                   <Button type="button" variant="ghost" className="flex-1" onClick={() => setShowCreateModal(false)}>Cancel</Button>
