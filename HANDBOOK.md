@@ -74,7 +74,7 @@ This is the production stack from the original vision. We are not there yet.
 | Styling | Tailwind CSS + shadcn/ui | Neutral theme |
 | Database | PostgreSQL via Supabase | Already set up |
 | ORM | Prisma | All schema changes via migrations |
-| Auth | Clerk | Replace Supabase Auth when migrating to Next.js |
+| Auth | Supabase Auth | Decided 2026-05-04 — keep instead of switching to Clerk |
 | File storage | Cloudflare R2 (or Supabase Storage initially) | Headshots, resumes |
 | Video | Mux | Reels — never store raw video ourselves |
 | Email | Resend | Transactional only |
