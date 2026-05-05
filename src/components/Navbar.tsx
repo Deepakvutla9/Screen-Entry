@@ -49,7 +49,7 @@ export function Navbar() {
               Casting Feed
             </Link>
             <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
-              Dashboard
+              My Profile
             </Link>
             <div className="h-6 w-px bg-slate-200" />
             <div className="flex items-center gap-3">
