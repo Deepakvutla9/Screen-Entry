@@ -346,7 +346,42 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                   </Button>
                 </div>
               )}
+
+              {/* Photos sub-section inside Media */}
+              {(profile.photos ?? []).length === 0 && (
+                <div className="mt-4 border-t border-slate-100 pt-4">
+                  <div className="flex items-center justify-between mb-3">
+                    <p className="text-xs font-semibold text-slate-500 uppercase tracking-widest">Photos</p>
+                    <Link href="/profile" className="text-xs text-[#1a3a5f] font-semibold hover:underline flex items-center gap-1">
+                      <Plus size={12} /> Add Photos
+                    </Link>
+                  </div>
+                  <p className="text-sm text-slate-400 italic">No photos uploaded yet. Add up to 5 photos from your Profile Settings.</p>
+                </div>
+              )}
             </Card>
+
+            {/* Photos */}
+            {(profile.photos ?? []).length > 0 && (
+              <Card className="p-6 border-slate-200">
+                <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4">Photos</h3>
+                <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+                  {(profile.photos ?? []).map((url, i) => (
+                    <div key={i} className="aspect-square rounded-xl overflow-hidden border border-slate-200">
+                      {/* eslint-disable-next-line @next/next/no-img-element */}
+                      <img src={url} alt={`Photo ${i + 1}`} className="w-full h-full object-cover hover:scale-105 transition-transform duration-300" />
+                    </div>
+                  ))}
+                  <a
+                    href="/profile"
+                    className="aspect-square rounded-xl border-2 border-dashed border-slate-200 flex flex-col items-center justify-center gap-1 text-slate-400 hover:border-[#1a3a5f] hover:text-[#1a3a5f] transition-colors"
+                  >
+                    <Plus size={18} />
+                    <span className="text-xs font-medium">Add</span>
+                  </a>
+                </div>
+              </Card>
+            )}
 
             {/* Credits & Experience */}
             <Card className="p-6 border-slate-200">
