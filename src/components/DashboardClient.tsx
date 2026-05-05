@@ -134,7 +134,21 @@ function ActorDashboard({ profile }: { profile: Profile }) {
   const [highlights, setHighlights] = useState<Highlight[]>([]);
   const [showEduDialog, setShowEduDialog] = useState(false);
   const [showHighlightDialog, setShowHighlightDialog] = useState(false);
-  const [lightbox, setLightbox] = useState<{ type: 'photo' | 'video'; url: string } | null>(null);
+  const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
+
+  const mediaItems: Array<{ type: 'photo' | 'video'; url: string; label?: string }> = [
+    ...(profile.video_reel ? [{ type: 'video' as const, url: profile.video_reel, label: 'Acting Reel' }] : []),
+    ...(profile.photos ?? []).map((url) => ({ type: 'photo' as const, url })),
+  ];
+
+  const openLightbox = (url: string) => {
+    const idx = mediaItems.findIndex((m) => m.url === url);
+    setLightboxIndex(idx >= 0 ? idx : 0);
+  };
+  const closeLightbox = () => setLightboxIndex(null);
+  const prevMedia = () => setLightboxIndex((i) => (i !== null ? (i - 1 + mediaItems.length) % mediaItems.length : 0));
+  const nextMedia = () => setLightboxIndex((i) => (i !== null ? (i + 1) % mediaItems.length : 0));
+  const currentMedia = lightboxIndex !== null ? mediaItems[lightboxIndex] : null;
 
   useEffect(() => {
     setCalls(getCastingCalls());
@@ -362,7 +376,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                       {/* Left — large featured photo */}
                       {featuredPhoto ? (
                         <button
-                          onClick={() => setLightbox({ type: 'photo', url: featuredPhoto })}
+                          onClick={() => openLightbox(featuredPhoto)}
                           className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 cursor-zoom-in"
                           style={{ aspectRatio: '2/3' }}
                         >
@@ -371,7 +385,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                         </button>
                       ) : (
                         <button
-                          onClick={() => setLightbox({ type: 'video', url: profile.video_reel! })}
+                          onClick={() => openLightbox(profile.video_reel!)}
                           className="flex-shrink-0 w-[45%] rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-video relative group"
                         >
                           <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover:bg-black/50 transition-colors z-10">
@@ -388,7 +402,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                         {(remainingItems as Array<{ type: 'video' | 'photo'; url: string; label?: string }>).slice(0, 4).map((item, i) => (
                           <button
                             key={i}
-                            onClick={() => setLightbox({ type: item.type, url: item.url })}
+                            onClick={() => openLightbox(item.url)}
                             className="relative rounded-xl overflow-hidden border border-slate-200 bg-slate-900 aspect-square group cursor-pointer"
                           >
                             {item.type === 'video' ? (
@@ -637,40 +651,73 @@ function ActorDashboard({ profile }: { profile: Profile }) {
       </div>
 
       {/* Lightbox */}
-      {lightbox && (
+      {currentMedia && (
         <div
-          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/90 p-4"
-          onClick={() => setLightbox(null)}
+          className="fixed inset-0 z-[200] flex items-center justify-center bg-black/92 p-4"
+          onClick={closeLightbox}
         >
+          {/* Close */}
           <button
-            onClick={() => setLightbox(null)}
-            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/20 flex items-center justify-center text-white transition-colors"
+            onClick={closeLightbox}
+            className="absolute top-4 right-4 w-10 h-10 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-lg transition-colors z-10"
           >
             ✕
           </button>
+
+          {/* Counter */}
+          {mediaItems.length > 1 && (
+            <div className="absolute top-4 left-1/2 -translate-x-1/2 bg-black/50 text-white text-xs font-medium px-3 py-1 rounded-full">
+              {(lightboxIndex ?? 0) + 1} / {mediaItems.length}
+            </div>
+          )}
+
+          {/* Prev */}
+          {mediaItems.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); prevMedia(); }}
+              className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
+            >
+              ‹
+            </button>
+          )}
+
+          {/* Media */}
           <div
             className="relative max-w-4xl w-full"
             onClick={(e) => e.stopPropagation()}
           >
-            {lightbox.type === 'photo' ? (
+            {currentMedia.type === 'photo' ? (
               // eslint-disable-next-line @next/next/no-img-element
               <img
-                src={lightbox.url}
+                src={currentMedia.url}
                 alt="Full photo"
                 className="w-full max-h-[85vh] object-contain rounded-xl shadow-2xl"
               />
             ) : (
               <div className="aspect-video w-full rounded-xl overflow-hidden shadow-2xl">
                 <iframe
-                  src={`${toEmbedUrl(lightbox.url)}?autoplay=1`}
+                  src={`${toEmbedUrl(currentMedia.url)}?autoplay=1`}
                   className="w-full h-full"
                   allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                   allowFullScreen
-                  title="Acting Reel"
+                  title={currentMedia.label ?? 'Video'}
                 />
               </div>
             )}
+            {currentMedia.label && (
+              <p className="text-center text-white/70 text-sm mt-3">{currentMedia.label}</p>
+            )}
           </div>
+
+          {/* Next */}
+          {mediaItems.length > 1 && (
+            <button
+              onClick={(e) => { e.stopPropagation(); nextMedia(); }}
+              className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
+            >
+              ›
+            </button>
+          )}
         </div>
       )}
     </div>
