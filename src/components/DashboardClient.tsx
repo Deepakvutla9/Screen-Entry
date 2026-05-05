@@ -22,6 +22,32 @@ import { getCastingCalls, createCastingCall, getApplicationsForActor } from '@/l
 import type { Profile } from '@/lib/supabase/client';
 import type { Application, CastingCall } from '@/types';
 
+function toEmbedUrl(url: string): string {
+  try {
+    const u = new URL(url);
+    // youtube.com/watch?v=ID
+    if (u.hostname.includes('youtube.com') && u.searchParams.get('v')) {
+      return `https://www.youtube.com/embed/${u.searchParams.get('v')}`;
+    }
+    // youtube.com/shorts/ID
+    if (u.hostname.includes('youtube.com') && u.pathname.startsWith('/shorts/')) {
+      const id = u.pathname.replace('/shorts/', '').split('?')[0];
+      return `https://www.youtube.com/embed/${id}`;
+    }
+    // youtu.be/ID
+    if (u.hostname === 'youtu.be') {
+      return `https://www.youtube.com/embed${u.pathname}`;
+    }
+    // vimeo.com/ID
+    if (u.hostname.includes('vimeo.com')) {
+      return `https://player.vimeo.com/video${u.pathname}`;
+    }
+  } catch {
+    // fall through
+  }
+  return url;
+}
+
 type Credit = { id: string; year: string; role: string; production: string; director: string; location: string };
 type Education = { id: string; year: string; degree: string; institution: string; trainer: string };
 type Highlight = { id: string; text: string };
@@ -299,7 +325,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
                 <div className="space-y-3">
                   <div className="relative aspect-video rounded-xl overflow-hidden bg-slate-900">
                     <iframe
-                      src={profile.video_reel.replace('watch?v=', 'embed/')}
+                      src={toEmbedUrl(profile.video_reel)}
                       className="w-full h-full"
                       allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
                       allowFullScreen
