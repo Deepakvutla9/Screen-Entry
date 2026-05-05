@@ -1,7 +1,8 @@
 'use client';
 
 import { useState } from 'react';
-import { Camera, Video, CheckCircle2, Loader2 } from 'lucide-react';
+import { useRouter } from 'next/navigation';
+import { Camera, Video, CheckCircle2, Loader2, ArrowLeft } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -16,6 +17,7 @@ function initials(name: string) {
 
 export function ProfileClient({ profile }: { profile: Profile }) {
   const supabase = createClient();
+  const router = useRouter();
 
   const [name, setName] = useState(profile.name ?? '');
   const [age, setAge] = useState(String(profile.age ?? ''));
@@ -68,7 +70,16 @@ export function ProfileClient({ profile }: { profile: Profile }) {
   return (
     <div className="max-w-4xl mx-auto py-12 px-6">
       <Card className="p-8">
-        <h2 className="text-2xl font-bold text-slate-900 mb-6">Profile Settings</h2>
+        <div className="flex items-center gap-4 mb-6">
+          <button
+            type="button"
+            onClick={() => router.back()}
+            className="flex items-center gap-1.5 text-sm text-slate-500 hover:text-[#1a3a5f] transition-colors"
+          >
+            <ArrowLeft size={16} /> Back
+          </button>
+          <h2 className="text-2xl font-bold text-slate-900">Profile Settings</h2>
+        </div>
         <div className="space-y-8">
 
           {/* Avatar row */}
