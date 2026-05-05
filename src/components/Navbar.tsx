@@ -2,7 +2,6 @@
 
 import { useEffect, useState } from 'react';
 import Link from 'next/link';
-import { useRouter } from 'next/navigation';
 import { User as UserIcon, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Logo } from '@/components/Logo';
@@ -28,9 +27,7 @@ export function Navbar() {
 
   const handleLogout = async () => {
     await supabase.auth.signOut();
-    setProfile(null);
-    router.push('/');
-    router.refresh();
+    window.location.href = '/';
   };
 
   return (
@@ -62,10 +59,9 @@ export function Navbar() {
               </Link>
               <button
                 onClick={handleLogout}
-                className="p-2 text-slate-400 hover:text-amber-400 transition-colors"
-                aria-label="Sign out"
+                className="flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-sm font-medium text-slate-400 hover:text-white hover:bg-red-900/40 transition-colors"
               >
-                <LogOut size={18} />
+                <LogOut size={15} /> Sign out
               </button>
             </div>
           </>
