@@ -96,7 +96,7 @@ export default function LandingPage() {
           </div>
           <div className="mt-16 text-center">
             <Button asChild variant="outline" className="px-10 h-12 border-2 border-[#1a3a5f] text-[#1a3a5f] hover:bg-[#1a3a5f] hover:text-white">
-              <Link href="/signup">Join to browse all talent</Link>
+              <Link href="/browse">Browse All Talent →</Link>
             </Button>
           </div>
         </div>

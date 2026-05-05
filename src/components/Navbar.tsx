@@ -48,6 +48,9 @@ export function Navbar() {
             <Link href="/feed" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
               Casting Feed
             </Link>
+            <Link href="/browse" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
+              Browse Talent
+            </Link>
             <Link href="/dashboard" className="text-sm font-medium text-slate-600 hover:text-[#1a3a5f]">
               My Profile
             </Link>
