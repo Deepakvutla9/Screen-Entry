@@ -1,8 +1,7 @@
-﻿'use client';
+'use client';
 
-import { useState } from 'react';
-import { useRouter } from 'next/navigation';
-import { CheckCircle2, User as UserIcon, Briefcase } from 'lucide-react';
+import { useRef, useState } from 'react';
+import { CheckCircle2, User as UserIcon, Briefcase, KeyRound } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -14,16 +13,15 @@ import { cn } from '@/lib/utils';
 type Mode = 'login' | 'signup';
 
 export function AuthForm({ mode }: { mode: Mode }) {
-  const supabase = createClient();
-  const router = useRouter();
+  const supabase = useRef(createClient()).current;
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
   const [role, setRole] = useState<'actor' | 'recruiter'>('actor');
+  const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [signupDone, setSignupDone] = useState(false);
-
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -32,13 +30,14 @@ export function AuthForm({ mode }: { mode: Mode }) {
 
     try {
       if (mode === 'signup') {
-        const { data, error: signUpError } = await supabase.auth.signUp({
-          email,
-          password,
-          options: { data: { name, role } },
+        const res = await fetch('/api/auth/signup', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password, name, role, inviteCode }),
         });
-        if (signUpError) { setError(signUpError.message); setLoading(false); return; }
-        if (data.user) setSignupDone(true);
+        const data = await res.json();
+        if (!res.ok) { setError(data.error ?? 'Signup failed.'); setLoading(false); return; }
+        setSignupDone(true);
         setLoading(false);
       } else {
         const res = await fetch('/api/auth/login', {
@@ -50,7 +49,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
         if (!res.ok) { setError(data.error ?? 'Login failed.'); setLoading(false); return; }
         window.location.href = '/dashboard';
       }
-    } catch (err) {
+    } catch {
       setError('Something went wrong. Please try again.');
       setLoading(false);
     }
@@ -101,10 +100,12 @@ export function AuthForm({ mode }: { mode: Mode }) {
                 <Input id="name" type="text" required placeholder="e.g. Rahul Verma" value={name} onChange={(e) => setName(e.target.value)} />
               </div>
             )}
+
             <div>
               <Label htmlFor="email" className="mb-1.5">Email Address</Label>
               <Input id="email" type="email" required placeholder="name@example.com" value={email} onChange={(e) => setEmail(e.target.value)} />
             </div>
+
             <div>
               <div className="flex items-center justify-between mb-1.5">
                 <Label htmlFor="password">Password</Label>
@@ -118,19 +119,37 @@ export function AuthForm({ mode }: { mode: Mode }) {
             </div>
 
             {mode === 'signup' && (
-              <div>
-                <Label className="mb-1.5">I am joining as</Label>
-                <div className="grid grid-cols-2 gap-3 mt-2">
-                  <button type="button" onClick={() => setRole('actor')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'actor' ? 'border-[#8B1A1A] bg-[#8B1A1A]/5' : 'border-slate-100 hover:border-slate-200')}>
-                    <UserIcon size={20} className={role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-400'} />
-                    <span className={cn('text-sm font-bold', role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-600')}>Actor</span>
-                  </button>
-                  <button type="button" onClick={() => setRole('recruiter')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'recruiter' ? 'border-amber-600 bg-amber-50' : 'border-slate-100 hover:border-slate-200')}>
-                    <Briefcase size={20} className={role === 'recruiter' ? 'text-amber-600' : 'text-slate-400'} />
-                    <span className={cn('text-sm font-bold', role === 'recruiter' ? 'text-amber-600' : 'text-slate-600')}>Recruiter</span>
-                  </button>
+              <>
+                <div>
+                  <Label className="mb-1.5">I am joining as</Label>
+                  <div className="grid grid-cols-2 gap-3 mt-2">
+                    <button type="button" onClick={() => setRole('actor')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'actor' ? 'border-[#8B1A1A] bg-[#8B1A1A]/5' : 'border-slate-100 hover:border-slate-200')}>
+                      <UserIcon size={20} className={role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-400'} />
+                      <span className={cn('text-sm font-bold', role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-600')}>Actor</span>
+                    </button>
+                    <button type="button" onClick={() => setRole('recruiter')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'recruiter' ? 'border-amber-600 bg-amber-50' : 'border-slate-100 hover:border-slate-200')}>
+                      <Briefcase size={20} className={role === 'recruiter' ? 'text-amber-600' : 'text-slate-400'} />
+                      <span className={cn('text-sm font-bold', role === 'recruiter' ? 'text-amber-600' : 'text-slate-600')}>Recruiter</span>
+                    </button>
+                  </div>
                 </div>
-              </div>
+
+                <div>
+                  <Label htmlFor="inviteCode" className="mb-1.5 flex items-center gap-1.5">
+                    <KeyRound size={14} className="text-amber-600" /> Invite Code
+                  </Label>
+                  <Input
+                    id="inviteCode"
+                    type="text"
+                    required
+                    placeholder="Enter your invite code"
+                    value={inviteCode}
+                    onChange={(e) => setInviteCode(e.target.value)}
+                    className="font-mono tracking-widest"
+                  />
+                  <p className="text-xs text-slate-400 mt-1.5">Screen Entry is currently invite-only. Contact us to get access.</p>
+                </div>
+              </>
             )}
 
             {error && <p className="text-red-500 text-sm font-medium">{error}</p>}
@@ -138,7 +157,6 @@ export function AuthForm({ mode }: { mode: Mode }) {
             <Button type="submit" disabled={loading} className="w-full h-12 text-lg mt-4 bg-[#8B1A1A] hover:bg-[#5C0808] shadow-lg shadow-[#8B1A1A]/10">
               {loading ? 'Please wait…' : mode === 'login' ? 'Sign In' : 'Get Started'}
             </Button>
-
           </form>
         </Card>
       </div>
