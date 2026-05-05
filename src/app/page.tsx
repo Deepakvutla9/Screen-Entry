@@ -1,172 +1,305 @@
-﻿import Link from 'next/link';
+import Link from 'next/link';
 import Image from 'next/image';
-import { Users, Briefcase, Search, ChevronRight } from 'lucide-react';
+import { ArrowRight, Play, Star, CheckCircle, Clapperboard, Users, Film, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
-import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { FEATURED_ACTORS, BLOG_POSTS, SEED_CASTING_CALLS } from '@/lib/data';
 
+const STATS = [
+  { value: '2,400+', label: 'Registered Actors' },
+  { value: '180+', label: 'Active Casting Calls' },
+  { value: '340+', label: 'Production Houses' },
+  { value: '96%', label: 'Satisfaction Rate' },
+];
+
+const STEPS = [
+  { n: '01', title: 'Create your profile', desc: 'Upload photos, a video reel, and your credits. Your profile is your digital portfolio — visible to casting directors across the industry.' },
+  { n: '02', title: 'Discover casting calls', desc: 'Browse a live feed of verified roles: features, web series, commercials, and more. Filter by location, age range, or language.' },
+  { n: '03', title: 'Apply in one click', desc: 'Submit your profile directly to the casting director. Track your application status in real time and get notified when you\'re shortlisted.' },
+];
+
+const TRUST = [
+  { icon: CheckCircle, text: 'Verified casting directors only' },
+  { icon: Film, text: 'Telugu & pan-India productions' },
+  { icon: Users, text: 'No agents or middlemen' },
+  { icon: TrendingUp, text: 'Direct recruiter contact' },
+];
+
 export default function LandingPage() {
-  const features = [
-    { icon: Users, title: 'Build Your Profile', desc: 'Showcase your portfolio, skills, and video reels to thousands of recruiters.' },
-    { icon: Search, title: 'Browse Opportunities', desc: 'Real-time feed of calls for web series, features, commercials, and more.' },
-    { icon: Briefcase, title: 'Apply with One Click', desc: 'No more physical portfolios. Apply instantly and track your application status.' },
-  ];
-
   return (
-    <div className="flex flex-col">
-      <section className="relative py-20 px-6 bg-gradient-to-br from-[#0D0000] via-[#8B1A1A] to-[#1a0505] text-white flex items-center justify-center text-center overflow-hidden">
-        <div className="absolute inset-0 opacity-10 pointer-events-none">
-          <div className="absolute top-0 left-0 w-full h-full bg-[url('https://images.unsplash.com/photo-1485846234645-a62644f84728?auto=format&fit=crop&q=80&w=2059')] bg-cover bg-center mix-blend-overlay" />
-        </div>
-        <div className="max-w-3xl relative z-10">
-          <Badge className="bg-white/10 text-white border-white/20 mb-6 px-4 py-1.5 text-sm uppercase tracking-widest">
-            Telugu Industry&apos;s #1 Casting Platform
-          </Badge>
-          <h2 className="text-5xl md:text-7xl font-bold tracking-tighter mb-6 leading-[1.1]">
-            Connecting <span className="text-amber-400">Talent</span> with <span className="text-amber-400">Big Screens</span>
-          </h2>
-          <p className="text-xl text-slate-300 mb-10 max-w-2xl mx-auto leading-relaxed">
-            Discover verified casting opportunities in the Telugu film industry. Whether you&apos;re an actor starting out or a veteran recruiter, Screen Entry simplifies your journey.
+    <div className="flex flex-col bg-white">
+
+      {/* ── HERO ── */}
+      <section className="relative min-h-[92vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-[#0D0000]">
+        {/* Gradient orbs */}
+        <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-[#8B1A1A]/30 blur-[120px] pointer-events-none" />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-amber-600/20 blur-[100px] pointer-events-none" />
+        <div className="absolute top-[30%] right-[20%] w-[250px] h-[250px] rounded-full bg-[#8B1A1A]/15 blur-[80px] pointer-events-none" />
+
+        {/* Subtle grid overlay */}
+        <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
+
+        <div className="relative z-10 max-w-4xl mx-auto">
+          <div className="inline-flex items-center gap-2 bg-white/5 border border-white/10 rounded-full px-4 py-1.5 mb-8">
+            <span className="w-1.5 h-1.5 rounded-full bg-amber-400 animate-pulse" />
+            <span className="text-xs font-semibold text-white/70 uppercase tracking-widest">Telugu Industry&apos;s #1 Casting Platform</span>
+          </div>
+
+          <h1 className="text-6xl md:text-8xl font-black tracking-tighter text-white leading-[0.95] mb-8">
+            Where&nbsp;
+            <span className="relative inline-block">
+              <span className="relative z-10 text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">Talent</span>
+            </span>
+            <br />
+            Meets the&nbsp;
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">Screen</span>
+          </h1>
+
+          <p className="text-lg md:text-xl text-white/55 max-w-2xl mx-auto leading-relaxed mb-12">
+            The casting platform built for the Telugu film industry. Actors get discovered. Recruiters find the perfect fit. No middlemen, no hassle.
           </p>
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <Button asChild size="lg" className="h-14 px-8 text-lg bg-amber-500 hover:bg-amber-600 text-white border-none shadow-lg shadow-amber-500/20">
-              <Link href="/signup">Join as Actor</Link>
-            </Button>
-            <Button asChild size="lg" variant="outline" className="h-14 px-8 text-lg border-white text-white bg-transparent hover:bg-white hover:text-[#8B1A1A]">
-              <Link href="/signup">Post Casting Call</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
 
-      <section className="py-24 px-6 bg-stone-50">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">How it works</h3>
-            <p className="text-slate-600 max-w-xl mx-auto italic">Bridging the gap between production houses and hidden gems across Hyderabad and beyond.</p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center mb-16">
+            <Button asChild size="lg" className="h-14 px-8 text-base font-semibold bg-amber-500 hover:bg-amber-400 text-black border-none shadow-2xl shadow-amber-500/25 transition-all hover:scale-[1.02]">
+              <Link href="/signup" className="flex items-center gap-2">
+                Start for free <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base font-semibold border-white/20 text-white bg-white/5 hover:bg-white/10 backdrop-blur-sm">
+              <Link href="/browse" className="flex items-center gap-2">
+                <Play size={16} fill="currentColor" /> Browse Talent
+              </Link>
+            </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {features.map((feature) => (
-              <Card key={feature.title} className="p-8 h-full border-none shadow-lg hover:shadow-xl transition-all">
-                <div className="w-14 h-14 bg-amber-50 rounded-2xl flex items-center justify-center text-amber-600 mb-6">
-                  <feature.icon size={28} />
+
+          {/* Social proof */}
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-3 text-sm text-white/40">
+            <div className="flex -space-x-2">
+              {FEATURED_ACTORS.slice(0, 4).map((a, i) => (
+                <div key={a.id} className="w-8 h-8 rounded-full border-2 border-[#0D0000] overflow-hidden relative" style={{zIndex: 4-i}}>
+                  <Image src={a.profilePhoto!} alt={a.name} fill className="object-cover" sizes="32px" />
                 </div>
-                <h4 className="text-xl font-bold text-slate-900 mb-3">{feature.title}</h4>
-                <p className="text-slate-600 leading-relaxed">{feature.desc}</p>
-              </Card>
-            ))}
+              ))}
+            </div>
+            <span>Joined by <strong className="text-white/70">2,400+ actors</strong> across Hyderabad</span>
+          </div>
+        </div>
+
+        {/* Bottom fade */}
+        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
+      </section>
+
+      {/* ── STATS BAR ── */}
+      <section className="py-16 px-6 bg-white border-b border-slate-100">
+        <div className="max-w-5xl mx-auto grid grid-cols-2 md:grid-cols-4 gap-8 text-center">
+          {STATS.map((s) => (
+            <div key={s.label}>
+              <p className="text-4xl font-black text-[#8B1A1A] tracking-tight mb-1">{s.value}</p>
+              <p className="text-sm text-slate-500 font-medium">{s.label}</p>
+            </div>
+          ))}
+        </div>
+      </section>
+
+      {/* ── HOW IT WORKS ── */}
+      <section className="py-28 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
+            <div>
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-4">How it works</p>
+              <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-[1.05] mb-6">
+                Three steps to your next role
+              </h2>
+              <p className="text-slate-500 text-lg leading-relaxed">
+                Screen Entry removes every barrier between you and the director. Build once, apply everywhere.
+              </p>
+
+              <div className="mt-8 flex flex-wrap gap-3">
+                {TRUST.map(({ icon: Icon, text }) => (
+                  <div key={text} className="flex items-center gap-2 bg-slate-50 rounded-full px-4 py-2">
+                    <Icon size={14} className="text-amber-600 flex-shrink-0" />
+                    <span className="text-xs font-semibold text-slate-700">{text}</span>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            <div className="space-y-6">
+              {STEPS.map((step, i) => (
+                <div key={step.n} className="flex gap-5 group">
+                  <div className="flex-shrink-0">
+                    <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-[#8B1A1A] to-[#5C0808] text-white font-black text-sm flex items-center justify-center shadow-lg shadow-[#8B1A1A]/20 group-hover:scale-110 transition-transform">
+                      {step.n}
+                    </div>
+                    {i < STEPS.length - 1 && (
+                      <div className="w-px h-6 bg-slate-200 mx-auto mt-2" />
+                    )}
+                  </div>
+                  <div className="pt-2">
+                    <h4 className="font-bold text-slate-900 text-lg mb-1">{step.title}</h4>
+                    <p className="text-slate-500 text-sm leading-relaxed">{step.desc}</p>
+                  </div>
+                </div>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section className="py-24 px-6 bg-white">
+      {/* ── FEATURED TALENT ── */}
+      <section className="py-28 px-6 bg-[#0D0000] overflow-hidden">
         <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-16">
-            <h3 className="text-3xl font-bold text-slate-900 mb-4">Featured Talent</h3>
-            <p className="text-slate-500">Discover rising stars already using Screen Entry.</p>
+          <div className="flex flex-col md:flex-row items-end justify-between mb-14 gap-6">
+            <div>
+              <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-3">Featured Talent</p>
+              <h2 className="text-5xl font-black text-white tracking-tight leading-tight">
+                Rising stars on<br />Screen Entry
+              </h2>
+            </div>
+            <Button asChild variant="outline" className="border-white/20 text-white bg-transparent hover:bg-white/10 flex-shrink-0">
+              <Link href="/browse" className="flex items-center gap-2">Browse all talent <ArrowRight size={16} /></Link>
+            </Button>
           </div>
+
           <div className="grid grid-cols-2 md:grid-cols-5 gap-4">
-            {FEATURED_ACTORS.map((actor) => (
-              <Card key={actor.id} className="flex flex-col group h-full hover:border-[#8B1A1A]/30 transition-all overflow-hidden p-0">
-                <div className="aspect-square overflow-hidden relative">
+            {FEATURED_ACTORS.map((actor, i) => (
+              <Link key={actor.id} href="/browse" className={`group relative rounded-2xl overflow-hidden bg-slate-900 cursor-pointer ${i === 0 ? 'md:col-span-2 md:row-span-2' : ''}`}>
+                <div className={`relative overflow-hidden ${i === 0 ? 'aspect-[3/4] md:aspect-auto md:h-full min-h-[320px]' : 'aspect-[3/4]'}`}>
                   <Image
                     src={actor.profilePhoto!}
                     alt={actor.name}
                     fill
-                    sizes="(max-width: 768px) 50vw, 20vw"
-                    className="object-cover transition-transform duration-500 group-hover:scale-110"
+                    sizes={i === 0 ? '(max-width: 768px) 50vw, 40vw' : '(max-width: 768px) 50vw, 20vw'}
+                    className="object-cover transition-transform duration-700 group-hover:scale-110"
                   />
-                </div>
-                <div className="p-3 flex flex-col flex-grow text-center">
-                  <h4 className="font-bold text-slate-900 text-sm mb-1 group-hover:text-[#8B1A1A] transition-colors truncate">{actor.name}</h4>
-                  <div className="space-y-0.5 mt-auto">
-                    <p className="text-[10px] text-slate-500">{actor.height || 'N/A'}</p>
-                    <div className="flex flex-wrap justify-center gap-1 mt-1.5 h-[20px] overflow-hidden">
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/10 to-transparent" />
+                  <div className="absolute bottom-0 left-0 right-0 p-4">
+                    <p className="font-bold text-white text-sm truncate">{actor.name}</p>
+                    <div className="flex gap-1 mt-1 flex-wrap">
                       {actor.languages?.slice(0, 2).map((lang) => (
-                        <span key={lang} className="text-[8px] px-1 py-0 bg-slate-100 text-slate-600 rounded shrink-0">
-                          {lang}
-                        </span>
+                        <span key={lang} className="text-[9px] px-1.5 py-0.5 bg-white/15 text-white/80 rounded-full">{lang}</span>
                       ))}
                     </div>
                   </div>
-                </div>
-              </Card>
-            ))}
-          </div>
-          <div className="mt-16 text-center">
-            <Button asChild variant="outline" className="px-10 h-12 border-2 border-[#8B1A1A] text-[#8B1A1A] hover:bg-[#8B1A1A] hover:text-white">
-              <Link href="/browse">Browse All Talent →</Link>
-            </Button>
-          </div>
-        </div>
-      </section>
-
-      <section className="py-24 px-6 bg-[#0D0000] text-white">
-        <div className="max-w-6xl mx-auto">
-          <div className="flex flex-col md:flex-row items-end justify-between mb-12 gap-6">
-            <div className="max-w-xl">
-              <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 mb-4">Recruitment Portal</Badge>
-              <h3 className="text-4xl font-bold tracking-tight mb-4">Casting Calls</h3>
-              <p className="text-slate-400">Leading production houses are looking for talent. Browse the latest casting calls and pitch your profile.</p>
-            </div>
-            <Button asChild className="bg-amber-500 text-white hover:bg-amber-600 border-none">
-              <Link href="/signup">Post a Casting Call</Link>
-            </Button>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-            {SEED_CASTING_CALLS.slice(0, 5).map((call) => (
-              <Link key={call.id} href="/signup">
-                <Card className="bg-[#1a0505] border-red-900/40 p-6 h-full hover:bg-[#1a0505]/80 hover:border-amber-500/30 transition-all cursor-pointer text-white">
-                  <div className="flex items-start justify-between mb-4">
-                    <Badge className="bg-amber-500/10 text-amber-400 border-amber-500/20 text-[10px]">{call.location}</Badge>
-                  </div>
-                  <h4 className="text-lg font-bold mb-2 text-white">{call.title}</h4>
-                  <p className="text-slate-400 text-sm line-clamp-3 mb-6 leading-relaxed">{call.description}</p>
-                  <div className="mt-auto pt-4 border-t border-red-900/30 flex items-center justify-between">
-                    <div className="flex flex-col">
-                      <span className="text-[10px] text-slate-500 uppercase font-bold tracking-wider">Age Range</span>
-                      <span className="text-sm font-semibold text-amber-300">{call.ageRange}</span>
+                  {i === 0 && (
+                    <div className="absolute top-3 right-3">
+                      <span className="flex items-center gap-1 bg-amber-500 text-black text-[10px] font-bold px-2 py-1 rounded-full">
+                        <Star size={9} fill="currentColor" /> Featured
+                      </span>
                     </div>
-                    <ChevronRight size={20} className="text-amber-500/50" />
-                  </div>
-                </Card>
+                  )}
+                </div>
               </Link>
             ))}
           </div>
         </div>
       </section>
 
-      <section className="py-24 px-6 bg-stone-50">
+      {/* ── CASTING CALLS ── */}
+      <section className="py-28 px-6 bg-stone-50">
         <div className="max-w-6xl mx-auto">
-          <div className="flex items-center justify-between mb-12">
-            <h3 className="text-3xl font-bold text-slate-900 tracking-tight">Movie News & Blogs</h3>
-            <button className="text-[#8B1A1A] font-bold flex items-center gap-1 hover:underline">
-              View All <ChevronRight size={18} />
-            </button>
+          <div className="flex flex-col md:flex-row items-end justify-between mb-14 gap-6">
+            <div>
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-3">Live Opportunities</p>
+              <h2 className="text-5xl font-black text-slate-900 tracking-tight leading-tight">
+                Latest casting<br />calls
+              </h2>
+            </div>
+            <Button asChild className="bg-[#8B1A1A] hover:bg-[#5C0808] text-white flex-shrink-0">
+              <Link href="/signup" className="flex items-center gap-2">Post a Casting Call <Clapperboard size={16} /></Link>
+            </Button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {BLOG_POSTS.map((post) => (
-              <Card key={post.id} className="h-full group cursor-pointer border-none shadow-sm hover:shadow-md transition-all overflow-hidden p-0">
-                <div className="aspect-video overflow-hidden relative">
-                  <Image src={post.imageUrl} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                </div>
-                <div className="p-6">
-                  <div className="flex items-center gap-2 mb-3">
-                    <Badge className="bg-slate-100 text-slate-500 border-none px-2 py-0.5">{post.category}</Badge>
-                    <span className="text-xs text-slate-400 font-medium">{new Date(post.date).toLocaleDateString()}</span>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+            {SEED_CASTING_CALLS.slice(0, 6).map((call, i) => (
+              <Link key={call.id} href="/signup" className="group">
+                <div className={`relative rounded-2xl p-6 h-full border transition-all duration-300 flex flex-col
+                  ${i === 0
+                    ? 'bg-gradient-to-br from-[#8B1A1A] to-[#5C0808] border-transparent text-white shadow-xl shadow-[#8B1A1A]/20 group-hover:shadow-2xl group-hover:shadow-[#8B1A1A]/30 group-hover:-translate-y-1'
+                    : 'bg-white border-slate-200 group-hover:border-[#8B1A1A]/30 group-hover:shadow-md group-hover:-translate-y-0.5'
+                  }`}>
+                  <div className="flex items-start justify-between mb-5">
+                    <span className={`text-[10px] font-bold uppercase tracking-wider px-2.5 py-1 rounded-full
+                      ${i === 0 ? 'bg-white/15 text-white/80' : 'bg-amber-50 text-amber-700'}`}>
+                      {call.location}
+                    </span>
+                    <ArrowRight size={16} className={`transition-transform group-hover:translate-x-1 ${i === 0 ? 'text-white/50' : 'text-slate-300 group-hover:text-[#8B1A1A]'}`} />
                   </div>
-                  <h4 className="text-lg font-bold text-slate-900 mb-3 group-hover:text-[#8B1A1A] transition-colors line-clamp-2">{post.title}</h4>
-                  <p className="text-slate-600 text-sm line-clamp-3 mb-4 leading-relaxed">{post.excerpt}</p>
-                  <div className="flex items-center gap-2 text-xs font-bold text-slate-400 mt-auto">
-                    <span>By {post.author}</span>
+                  <h4 className={`text-lg font-bold mb-2 leading-snug ${i === 0 ? 'text-white' : 'text-slate-900'}`}>{call.title}</h4>
+                  <p className={`text-sm line-clamp-2 mb-6 leading-relaxed flex-1 ${i === 0 ? 'text-white/65' : 'text-slate-500'}`}>{call.description}</p>
+                  <div className={`pt-4 border-t flex items-center justify-between ${i === 0 ? 'border-white/15' : 'border-slate-100'}`}>
+                    <div>
+                      <p className={`text-[10px] uppercase font-bold tracking-wider mb-0.5 ${i === 0 ? 'text-white/40' : 'text-slate-400'}`}>Age Range</p>
+                      <p className={`text-sm font-bold ${i === 0 ? 'text-amber-300' : 'text-[#8B1A1A]'}`}>{call.ageRange}</p>
+                    </div>
+                    {call.budget && (
+                      <p className={`text-xs font-semibold ${i === 0 ? 'text-white/60' : 'text-slate-500'}`}>{call.budget}</p>
+                    )}
                   </div>
                 </div>
-              </Card>
+              </Link>
             ))}
           </div>
         </div>
       </section>
+
+      {/* ── BLOG / NEWS ── */}
+      <section className="py-28 px-6 bg-white">
+        <div className="max-w-6xl mx-auto">
+          <div className="flex items-end justify-between mb-14">
+            <div>
+              <p className="text-xs font-bold text-amber-600 uppercase tracking-widest mb-3">Industry Buzz</p>
+              <h2 className="text-5xl font-black text-slate-900 tracking-tight">Movie News &amp; Blogs</h2>
+            </div>
+            <button className="text-sm font-semibold text-[#8B1A1A] flex items-center gap-1.5 hover:gap-2.5 transition-all">
+              View all <ArrowRight size={16} />
+            </button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {BLOG_POSTS.map((post) => (
+              <div key={post.id} className="group cursor-pointer">
+                <div className="aspect-[16/10] overflow-hidden rounded-2xl relative mb-5 bg-slate-100">
+                  <Image src={post.imageUrl} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                  <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-xs font-bold text-slate-700 px-2.5 py-1 rounded-full">{post.category}</span>
+                </div>
+                <p className="text-xs text-slate-400 font-medium mb-2">{new Date(post.date).toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' })}</p>
+                <h4 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#8B1A1A] transition-colors line-clamp-2 leading-snug">{post.title}</h4>
+                <p className="text-slate-500 text-sm line-clamp-2 leading-relaxed">{post.excerpt}</p>
+                <p className="text-xs text-slate-400 font-semibold mt-3">By {post.author}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* ── FINAL CTA ── */}
+      <section className="py-28 px-6 bg-[#0D0000] relative overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-[#8B1A1A]/25 blur-[100px] pointer-events-none" />
+        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full bg-amber-600/10 blur-[80px] pointer-events-none" />
+        <div className="relative z-10 max-w-3xl mx-auto text-center">
+          <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-5">Ready to begin?</p>
+          <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.95] mb-8">
+            Your next role<br />
+            <span className="text-transparent bg-clip-text bg-gradient-to-r from-amber-300 to-amber-500">starts here</span>
+          </h2>
+          <p className="text-white/50 text-lg mb-12 leading-relaxed">
+            Join thousands of actors already on Screen Entry. Create your profile in minutes and get discovered by top Telugu productions.
+          </p>
+          <div className="flex flex-col sm:flex-row gap-4 justify-center">
+            <Button asChild size="lg" className="h-14 px-10 text-base font-bold bg-amber-500 hover:bg-amber-400 text-black border-none shadow-2xl shadow-amber-500/20 hover:scale-[1.02] transition-all">
+              <Link href="/signup" className="flex items-center gap-2">
+                Create free profile <ArrowRight size={18} />
+              </Link>
+            </Button>
+            <Button asChild size="lg" variant="outline" className="h-14 px-10 text-base font-semibold border-white/15 text-white bg-transparent hover:bg-white/5">
+              <Link href="/login">Sign in</Link>
+            </Button>
+          </div>
+          <p className="text-white/25 text-xs mt-6">No credit card required &middot; Free for actors forever</p>
+        </div>
+      </section>
+
     </div>
   );
 }
