@@ -8,10 +8,10 @@
 
 A professional casting platform for the **Telugu film industry**. Two user types share the platform:
 
-- **Actors** — build profiles with headshots, reels, credits, skills. Browse and apply to casting calls. Network with peers.
+- **Actors** — build profiles with headshots, reels, skills, languages. Browse and apply to casting calls.
 - **Recruiters** (casting directors, agents, producers) — post casting calls, browse talent, manage applicants, shortlist actors.
 
-Think "LinkedIn meets Backstage, but social-first and built specifically for Telugu cinema."
+"LinkedIn meets Backstage, built specifically for Telugu cinema."
 
 ---
 
@@ -29,92 +29,100 @@ I am a non-technical founder building this solo with AI coding agents. I read co
 ## 3. Current State of the Project
 
 > **This section must be updated at the end of every session.**
-> Last updated: 2026-05-04 (Next.js + shadcn rewrite landed on `next-rewrite` branch)
+> Last updated: 2026-05-05
 
 ### What's been built
 
 | Area | Status | Notes |
 |---|---|---|
-| Landing page | ✅ Done | Hero, features, featured actors, casting calls preview, blog section |
-| Auth — Email/Password | ✅ Done | Signup + login via Supabase Auth |
-| Auth — Google OAuth | 🟡 UI done, needs config | Button built; requires Google Cloud + Supabase dashboard setup |
-| Profiles table (Supabase) | ✅ Done | Created with RLS, auto-populated via DB trigger on signup |
-| Casting feed | ✅ Done | Browse active casting calls, one-click apply (mock data) |
-| Actor dashboard | ✅ Done | Application history, stats (mock data) |
+| Landing page | ✅ Done | Cinematic gold/red theme — hero, stats bar, steps, featured talent, casting calls, blog, CTA |
+| Auth — Email/Password | ✅ Done | Server-side login via `/api/auth/login`; server-side logout via `/api/auth/signout` |
+| Auth — Google OAuth | ❌ Removed | Removed — requires Google Cloud Console credit card setup which isn't ready |
+| Profiles table (Supabase) | ✅ Done | RLS enabled, auto-populated via DB trigger on signup |
+| Profile settings | ✅ Done | Saves to Supabase; redirects to dashboard on save |
+| Avatar upload | ✅ Done | Supabase Storage, label+input pattern, cache-busted URL |
+| Portfolio photos | ✅ Done | Up to 5 photos, Supabase Storage, inline remove button |
+| Actor dashboard | ✅ Done | Stats, application history, media lightbox (avatar + photos + reel) |
 | Recruiter dashboard | ✅ Done | Post casting calls, view applicants, shortlist (mock data) |
-| Profile settings page | ✅ Done | Form UI only — save not yet wired to Supabase |
+| Public actor profiles | ✅ Done | Read-only page at `/actors/[id]` — Backstage-style layout |
+| Browse Talent | ✅ Done | Actor cards link to public profiles |
+| Casting feed | ✅ Done | Browse active casting calls (mock data) |
+| Logo component | ✅ Done | SVG clapperboard logo, light/dark variants, used across all pages |
+| Navbar sign out | ✅ Done | Visible "Sign out" button on all pages; uses server-side signout route |
 | Casting calls in Supabase | ❌ Not started | Still using localStorage mock store |
 | Applications in Supabase | ❌ Not started | Still using localStorage mock store |
-| File uploads (headshots/reels) | ❌ Not started | — |
 | Messaging | ❌ Not started | — |
-| Deployment | ❌ Not started | — |
 
-### Current tech stack (what's actually running)
+### Current tech stack
 
-| Layer | Current Choice | Notes |
+| Layer | Choice | Notes |
 |---|---|---|
-| Framework | Next.js 15 (App Router) + React 19 | Migrated from Vite on `next-rewrite` branch |
-| Styling | Tailwind CSS v4 + shadcn/ui (new-york style) | Components: Button, Card, Badge, Input, Label |
-| Auth | Supabase Auth via `@supabase/ssr` | Email/password live; Google OAuth button built but not activated |
-| Database | Supabase (PostgreSQL) | Profiles table live; casting calls + applications still in localStorage |
-| ORM/Client | @supabase/supabase-js + @supabase/ssr | Browser/server clients in `src/lib/supabase/`, no Prisma yet |
-| State / mock data | localStorage (client-only helpers) | `src/lib/store.ts` — to be replaced by Supabase queries |
+| Framework | Next.js 15 (App Router) + React 19 + TypeScript strict | |
+| Styling | Tailwind CSS v4 + shadcn/ui (new-york style) | Components: Button, Card, Badge, Input, Label, Avatar |
+| Auth | Supabase Auth via `@supabase/ssr` | Email/password only; login + logout are server-side API routes |
+| Database | Supabase (PostgreSQL) | Profiles live; casting calls + applications still in localStorage |
+| Storage | Supabase Storage | Bucket: `Screen Entry`; avatars + portfolio photos |
+| State / mock data | localStorage (`src/lib/store.ts`) | To be replaced by Supabase queries |
 | Package manager | npm | |
-| Hosting | Vercel auto-deploys from `main` branch | `next-rewrite` branch builds preview deploys only |
+| Hosting | Vercel auto-deploys from `main` | |
 
-### Folder structure (Next.js)
+### Folder structure
 
 ```
 src/
 ├── app/
-│   ├── layout.tsx          (root layout + Navbar + footer)
-│   ├── page.tsx            (landing - Server Component)
-│   ├── globals.css         (Tailwind + shadcn theme tokens)
+│   ├── layout.tsx                root layout (Navbar + footer)
+│   ├── page.tsx                  landing page (Server Component)
 │   ├── login/page.tsx
 │   ├── signup/page.tsx
-│   ├── dashboard/page.tsx  (calls requireProfile)
+│   ├── dashboard/page.tsx        calls requireProfile(), protected
 │   ├── feed/page.tsx
-│   ├── profile/page.tsx
-│   └── applicants/[id]/page.tsx
+│   ├── profile/page.tsx          profile settings, protected
+│   ├── browse/page.tsx           browse actors, protected
+│   ├── actors/[id]/page.tsx      public actor profile
+│   ├── forgot-password/page.tsx
+│   ├── reset-password/page.tsx
+│   ├── auth/callback/route.ts    handles email confirm + password reset links
+│   └── api/auth/
+│       ├── login/route.ts        POST — signs in server-side, sets session cookie
+│       └── signout/route.ts      POST — signs out server-side, clears session cookie
 ├── components/
-│   ├── ui/                 (shadcn primitives — generated)
-│   ├── Navbar.tsx          (client — auth-aware)
-│   ├── AuthForm.tsx
-│   ├── DashboardClient.tsx
-│   ├── CastingFeedClient.tsx
-│   ├── ProfileClient.tsx
-│   └── ApplicantsClient.tsx
+│   ├── ui/                       shadcn/ui primitives (generated — do not edit manually)
+│   ├── Logo.tsx                  SVG logo, props: size (sm/md/lg), variant (light/dark), href
+│   ├── Navbar.tsx                client component — auth-aware nav + sign out button
+│   ├── AuthForm.tsx              shared login/signup form
+│   ├── DashboardClient.tsx       actor/recruiter dashboard with lightbox
+│   ├── ProfileClient.tsx         profile settings + avatar + photo gallery
+│   ├── PublicActorProfile.tsx    read-only actor profile with lightbox
+│   ├── BrowseClient.tsx          actor card grid
+│   └── CastingFeedClient.tsx     casting call feed
 ├── lib/
 │   ├── supabase/
-│   │   ├── client.ts       (browser — for client components)
-│   │   └── server.ts       (server — for RSCs/route handlers)
-│   ├── auth.ts             (requireProfile helper)
-│   ├── data.ts             (server-safe seed data)
-│   ├── store.ts            (client-only localStorage helpers)
-│   └── utils.ts            (cn helper)
-├── types.ts                (User, Profile, CastingCall, Application, etc.)
-└── middleware.ts           (refreshes Supabase session)
+│   │   ├── client.ts             browser client; exports Profile type
+│   │   └── server.ts             server client for RSCs and route handlers
+│   ├── auth.ts                   requireProfile() — redirects to /login if no session
+│   ├── data.ts                   server-safe seed/mock data
+│   ├── store.ts                  localStorage helpers (mock casting calls/applications)
+│   └── utils.ts                  cn() Tailwind helper
+└── middleware.ts                 refreshes Supabase session cookie on every request
 ```
 
 ---
 
 ## 4. Target Architecture (Where We're Heading)
 
-This is the production stack from the original vision. We are not there yet.
-
 | Layer | Target Choice | Notes |
 |---|---|---|
-| Framework | Next.js (App Router) + TypeScript strict | Migration from current Vite prototype |
-| Styling | Tailwind CSS + shadcn/ui | Neutral theme |
-| Database | PostgreSQL via Supabase | Already set up |
-| ORM | Prisma | All schema changes via migrations |
-| Auth | Supabase Auth | Decided 2026-05-04 — keep instead of switching to Clerk |
-| File storage | Cloudflare R2 (or Supabase Storage initially) | Headshots, resumes |
-| Video | Mux | Reels — never store raw video ourselves |
+| Framework | Next.js (App Router) + TypeScript strict | Current |
+| Styling | Tailwind CSS + shadcn/ui | Current |
+| Database | PostgreSQL via Supabase | Current |
+| Auth | Supabase Auth | Current — email/password; Google OAuth deferred |
+| File storage | Supabase Storage | Current for photos; Cloudflare R2 or Mux for video later |
+| Video | Mux | Reels — never store raw video |
 | Email | Resend | Transactional only |
-| Chat | Stream Chat | Do not build chat from scratch |
-| Search | Postgres full-text search → Algolia later | |
-| Hosting | Vercel | |
+| Chat | Stream Chat | Do not build from scratch |
+| Search | Postgres full-text → Algolia later | |
+| Hosting | Vercel | Current |
 | Background jobs | Inngest | Email, video processing |
 
 > If you think a different tool is better, **tell me and wait**. Do not swap silently.
@@ -127,11 +135,13 @@ This is the production stack from the original vision. We are not there yet.
 - **Project ID:** `plcngksoavdaimosnvzy`
 - **Region:** us-east-1
 - **URL:** `https://plcngksoavdaimosnvzy.supabase.co`
-- **Env file:** `.env.local` (not committed to git)
+- **Storage bucket:** `Screen Entry` (public)
+- **Env file:** `.env.local` (never committed)
 
-### Database schema (current)
+### Database schema
 
 #### `profiles` table
+
 | Column | Type | Notes |
 |---|---|---|
 | id | UUID | Primary key, references auth.users(id) |
@@ -143,9 +153,10 @@ This is the production stack from the original vision. We are not there yet.
 | height | TEXT | Actors only |
 | skills | TEXT[] | Actors only |
 | languages | TEXT[] | Actors only |
-| video_reel | TEXT | YouTube URL, actors only |
+| video_reel | TEXT | YouTube/Vimeo URL, actors only |
 | company_name | TEXT | Recruiters only |
-| profile_photo | TEXT | URL |
+| profile_photo | TEXT | Public URL (Supabase Storage) with cache-bust `?t=` param |
+| photos | TEXT[] | Up to 5 portfolio photo URLs |
 | created_at | TIMESTAMPTZ | Auto |
 | updated_at | TIMESTAMPTZ | Auto-updated via trigger |
 
@@ -154,71 +165,69 @@ This is the production stack from the original vision. We are not there yet.
 - Users can only update/insert their own profile (`auth.uid() = id`)
 
 **Triggers:**
-- `on_auth_user_created` — auto-creates a profile row when a new auth user signs up (reads `name` and `role` from `raw_user_meta_data`)
+- `on_auth_user_created` — auto-creates a profile row on signup (reads `name` and `role` from `raw_user_meta_data`)
 - `profiles_updated_at` — auto-updates `updated_at` on every row change
 
 ---
 
-## 6. Google OAuth Setup (Pending)
+## 6. Auth Architecture
 
-The UI button is built. To activate it:
+All auth flows are server-side to ensure session cookies work reliably on all connection speeds and devices.
 
-1. **Google Cloud Console** → Create OAuth 2.0 Client ID (Web app)
-   - Authorized redirect URI: `https://plcngksoavdaimosnvzy.supabase.co/auth/v1/callback`
-2. **Supabase Dashboard** → Authentication → Providers → Google → paste Client ID + Secret
+| Flow | Route | How |
+|---|---|---|
+| Sign up | Client `supabase.auth.signUp()` | User gets email confirmation |
+| Email confirm | `/auth/callback?code=...` | `exchangeCodeForSession` then redirect to `/dashboard` |
+| Sign in | `POST /api/auth/login` | Server-side `signInWithPassword`, sets cookie, returns `{ ok: true }` |
+| Sign out | `POST /api/auth/signout` | Server-side `signOut`, clears cookie, returns `{ ok: true }` |
+| Forgot password | Client `supabase.auth.resetPasswordForEmail()` | Sends reset email |
+| Reset password | `/reset-password?code=...` | `exchangeCodeForSession` then `updateUser({ password })` |
+| Session refresh | `middleware.ts` | Runs on every request, calls `getUser()` to refresh cookie |
 
----
-
-## 7. Architecture Principles (Current Prototype)
-
-- **All auth goes through Supabase Auth.** Never roll custom auth.
-- **Database access via `@supabase/supabase-js`** in `src/lib/supabase.ts`.
-- **MockStore (`src/lib/store.ts`)** handles casting calls and applications for now — replace with Supabase queries as features are built out.
-- **Validate every input** with at minimum HTML required attributes; use Zod when migrating to Next.js.
-- **No `any` in TypeScript.** Use `unknown` and narrow.
+**Important:** Never use `router.push()` for auth redirects — use `window.location.href` to force a full page reload so the server reads the fresh session cookie.
 
 ---
 
-## 8. UI/UX Principles
+## 7. UI/UX Principles
 
+- **Cinematic gold and red theme.** Primary: `#8B1A1A` (deep red). Accent: `amber-500` / `#F59E0B`. Dark backgrounds: `#0D0000`.
+- **Consistent Logo.** Use the `<Logo>` component everywhere — never inline SVG or text. Props: `size` (sm/md/lg), `variant` (light for dark backgrounds, dark for light backgrounds), `href` (default `/`).
+- **Navbar on every page** via root layout. Sign out button always visible when logged in.
 - **Mobile-first.** Build mobile layout first, then desktop.
-- **Visual: clean editorial.** Neutral palette (slate/stone), emerald accent, generous whitespace, strong typography.
-- **Primary brand colors:** `#1a3a5f` (navy) + `emerald-600` (green)
 - **Headshots and reels lead.** Visual content is the product — never bury it.
 - **Two distinct experiences.** Actor and recruiter users see different dashboards, navigation, and CTAs.
-- **Loading states everywhere.** No bare spinners — use skeleton screens.
+- **Loading states everywhere.** Use `Loader2` spinner from lucide-react.
 - **Empty states are designed**, not blank pages.
-- **Accessible** — WCAG AA, keyboard navigation, alt text, semantic HTML.
 
 ---
 
-## 9. Code Style
+## 8. Code Style
 
-- TypeScript strict mode on. No suppressions without comments explaining why.
-- Components: PascalCase. Component files: `ComponentName.tsx`.
-- Hooks: `useThing.ts`, camelCase.
-- Comments explain *why*, not *what*.
-- Functions stay short — if over ~50 lines, suggest splitting.
+- TypeScript strict mode. No `any`. Use `unknown` and narrow.
+- Components: PascalCase files (`ComponentName.tsx`).
+- Supabase browser client: always created with `useRef(createClient()).current` inside components to avoid re-creating on every render.
+- File uploads: always use `<label htmlFor>` + `className="sr-only"` on the `<input>` — never programmatic `.click()`.
+- Auth redirects: always `window.location.href`, never `router.push()`.
 - No unused imports.
+- Comments explain *why*, not *what*.
 
 ---
 
-## 10. Workflow Rules for Agents
+## 9. Workflow Rules for Agents
 
-When I ask you to build a feature:
+When building a feature:
 
 1. **Restate what you'll build** in 2–3 sentences before writing code.
 2. **List files you'll create or modify** before touching them.
 3. **Flag any new dependencies** before installing.
-4. **Make one logical change at a time.** Don't bundle unrelated edits.
+4. **Make one logical change at a time.**
 5. **After the change, summarize:** what changed, what to test, what could break.
-6. **Suggest the git commit message** in conventional-commit format.
 
 When debugging:
 
-1. **Reproduce the issue first.** Don't guess.
-2. **State your hypothesis** before changing code.
-3. **One fix at a time.** If the first fix doesn't work, revert before trying another.
+1. **State your hypothesis** before changing code.
+2. **One fix at a time.** If the first fix doesn't work, revert before trying another.
+3. **Do not refactor while fixing.**
 
 When unsure:
 
@@ -227,7 +236,7 @@ When unsure:
 
 ---
 
-## 11. Things You Must Never Do
+## 10. Things You Must Never Do
 
 - Never run `git push --force` or `git reset --hard` without me typing the command myself.
 - Never run any Supabase command that wipes data without explicit confirmation.
@@ -236,10 +245,12 @@ When unsure:
 - Never modify the auth system without flagging it as high-risk first.
 - Never rewrite working code "for clarity" unless I ask.
 - Never invent libraries, APIs, or function signatures — if unsure something exists, check or ask.
+- Never use `router.push()` for post-auth navigation — always `window.location.href`.
+- Never call `createClient()` directly inside a component body — always `useRef(createClient()).current`.
 
 ---
 
-## 12. Definition of Done (per feature)
+## 11. Definition of Done (per feature)
 
 A feature is "done" only when:
 
@@ -249,15 +260,15 @@ A feature is "done" only when:
 - [ ] Mobile layout works
 - [ ] Auth/permissions are enforced
 - [ ] No TypeScript or lint errors
-- [ ] Smoke test still passes (sign up, sign in, core action, sign out)
+- [ ] Smoke test passes (sign up → confirm email → sign in → core action → sign out)
 - [ ] This handbook's "Current State" table is updated
 
 ---
 
-## 13. Next Priorities (Suggested)
+## 12. Next Priorities (Suggested)
 
-1. **Activate Google OAuth** — complete the Google Cloud + Supabase dashboard config
-2. **Wire profile save** — connect the Profile Settings form to `UPDATE profiles` in Supabase
-3. **Move casting calls to Supabase** — create `casting_calls` table, replace mock store reads/writes
-4. **Move applications to Supabase** — create `applications` table, replace mock store
-5. **Profile photo upload** — connect to Supabase Storage
+1. **Move casting calls to Supabase** — create `casting_calls` table, replace `store.ts` mock reads/writes
+2. **Move applications to Supabase** — create `applications` table, replace mock store
+3. **Activate Google OAuth** — complete Google Cloud Console + Supabase dashboard config when ready
+4. **Email notifications** — integrate Resend for casting call applications
+5. **Search / filters** — full-text search on actor profiles and casting calls
