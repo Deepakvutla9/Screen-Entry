@@ -1,6 +1,6 @@
 ﻿'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import { User as UserIcon, LogOut } from 'lucide-react';
 import { Button } from '@/components/ui/button';
@@ -8,7 +8,7 @@ import { Logo } from '@/components/Logo';
 import { createClient, type Profile } from '@/lib/supabase/client';
 
 export function Navbar() {
-  const supabase = createClient();
+  const supabase = useRef(createClient()).current;
   const [profile, setProfile] = useState<Profile | null>(null);
 
   useEffect(() => {
@@ -20,7 +20,9 @@ export function Navbar() {
     }
     loadProfile();
 
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(() => loadProfile());
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (!session) { setProfile(null); } else { loadProfile(); }
+    });
     return () => subscription.unsubscribe();
   }, [supabase]);
 
