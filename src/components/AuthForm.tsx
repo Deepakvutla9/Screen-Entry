@@ -43,6 +43,14 @@ export function AuthForm({ mode }: { mode: Mode }) {
       } else {
         const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
         if (signInError) { setError(signInError.message); setLoading(false); return; }
+        // Wait for session to be written before redirecting (important on slow connections)
+        await new Promise<void>((resolve) => {
+          const { data: { subscription } } = supabase.auth.onAuthStateChange((event) => {
+            if (event === 'SIGNED_IN') { subscription.unsubscribe(); resolve(); }
+          });
+          // Fallback: redirect after 3s regardless
+          setTimeout(() => { subscription.unsubscribe(); resolve(); }, 3000);
+        });
         window.location.href = '/dashboard';
       }
     } catch (err) {
