@@ -31,10 +31,10 @@ export default function LandingPage() {
 
       {/* ── HERO ── */}
       <section className="relative min-h-[92vh] flex flex-col items-center justify-center text-center px-6 overflow-hidden bg-[#0D0000]">
-        {/* Gradient orbs */}
-        <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] rounded-full bg-[#8B1A1A]/30 blur-[120px] pointer-events-none" />
-        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] rounded-full bg-amber-600/20 blur-[100px] pointer-events-none" />
-        <div className="absolute top-[30%] right-[20%] w-[250px] h-[250px] rounded-full bg-[#8B1A1A]/15 blur-[80px] pointer-events-none" />
+        {/* Gradient orbs — use inline style filter to guarantee blur renders correctly */}
+        <div className="absolute top-[-10%] left-[-5%] w-[500px] h-[500px] bg-[#8B1A1A]/30 pointer-events-none" style={{filter:'blur(140px)'}} />
+        <div className="absolute bottom-[-10%] right-[-5%] w-[400px] h-[400px] bg-amber-600/15 pointer-events-none" style={{filter:'blur(120px)'}} />
+        <div className="absolute top-[30%] right-[20%] w-[250px] h-[250px] bg-[#8B1A1A]/10 pointer-events-none" style={{filter:'blur(100px)'}} />
 
         {/* Subtle grid overlay */}
         <div className="absolute inset-0 opacity-[0.03]" style={{backgroundImage:'linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)',backgroundSize:'60px 60px'}} />
@@ -85,8 +85,6 @@ export default function LandingPage() {
           </div>
         </div>
 
-        {/* Bottom fade */}
-        <div className="absolute bottom-0 left-0 right-0 h-24 bg-gradient-to-t from-white to-transparent pointer-events-none" />
       </section>
 
       {/* ── STATS BAR ── */}
@@ -275,8 +273,8 @@ export default function LandingPage() {
 
       {/* ── FINAL CTA ── */}
       <section className="py-28 px-6 bg-[#0D0000] relative overflow-hidden">
-        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-[600px] h-[300px] rounded-full bg-[#8B1A1A]/25 blur-[100px] pointer-events-none" />
-        <div className="absolute bottom-0 right-0 w-[300px] h-[300px] rounded-full bg-amber-600/10 blur-[80px] pointer-events-none" />
+        <div className="absolute top-[-100px] left-1/2 -translate-x-1/2 w-[800px] h-[400px] bg-[#8B1A1A]/20 pointer-events-none" style={{filter:'blur(140px)'}} />
+        <div className="absolute bottom-[-100px] right-[-100px] w-[400px] h-[400px] bg-amber-600/8 pointer-events-none" style={{filter:'blur(120px)'}} />
         <div className="relative z-10 max-w-3xl mx-auto text-center">
           <p className="text-xs font-bold text-amber-500 uppercase tracking-widest mb-5">Ready to begin?</p>
           <h2 className="text-5xl md:text-7xl font-black text-white tracking-tighter leading-[0.95] mb-8">
