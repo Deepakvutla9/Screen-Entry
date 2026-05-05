@@ -1,4 +1,4 @@
-'use client';
+ï»¿'use client';
 
 import { useState } from 'react';
 import Link from 'next/link';
@@ -108,7 +108,7 @@ export function PublicActorProfile({ profile }: { profile: Profile }) {
                 <span className="font-medium text-[#8B1A1A]">Actor</span>
                 {profile.location && (
                   <>
-                    <span className="text-slate-300">·</span>
+                    <span className="text-slate-300">Â·</span>
                     <span className="flex items-center gap-1"><MapPin size={13} />{profile.location}</span>
                   </>
                 )}
@@ -129,18 +129,18 @@ export function PublicActorProfile({ profile }: { profile: Profile }) {
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Playing Age</span>
                   <span className="text-sm font-semibold text-slate-800">
-                    {profile.age ? `${Math.max(18, profile.age - 5)}–${profile.age + 5}` : '—'}
+                    {profile.age ? `${Math.max(18, profile.age - 5)}â€“${profile.age + 5}` : 'â€”'}
                   </span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Height</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.height ?? '—'}</span>
+                  <span className="text-sm font-semibold text-slate-800">{profile.height ?? 'â€”'}</span>
                 </div>
                 <Separator />
                 <div className="flex justify-between items-center">
                   <span className="text-xs text-slate-500 font-medium uppercase tracking-wide">Age</span>
-                  <span className="text-sm font-semibold text-slate-800">{profile.age ?? '—'}</span>
+                  <span className="text-sm font-semibold text-slate-800">{profile.age ?? 'â€”'}</span>
                 </div>
               </div>
             </Card>
@@ -175,7 +175,7 @@ export function PublicActorProfile({ profile }: { profile: Profile }) {
               <Card className="p-6 border-slate-200">
                 <h3 className="text-sm font-bold text-slate-800 uppercase tracking-widest mb-4">Media</h3>
                 <div className="flex gap-3">
-                  {/* Left — large featured */}
+                  {/* Left â€” large featured */}
                   {featuredPhoto ? (
                     <button
                       onClick={() => openLightbox(featuredPhoto)}
@@ -199,7 +199,7 @@ export function PublicActorProfile({ profile }: { profile: Profile }) {
                     </button>
                   ) : null}
 
-                  {/* Right — 2×2 grid */}
+                  {/* Right â€” 2Ã—2 grid */}
                   <div className="flex-1 grid grid-cols-2 gap-2">
                     {(remainingItems as Array<{ type: 'video' | 'photo'; url: string; label?: string }>).slice(0, 4).map((item, i) => (
                       <button
@@ -272,7 +272,7 @@ export function PublicActorProfile({ profile }: { profile: Profile }) {
               onClick={(e) => { e.stopPropagation(); prevMedia(); }}
               className="absolute left-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
             >
-              ‹
+              â€¹
             </button>
           )}
 
@@ -302,7 +302,7 @@ export function PublicActorProfile({ profile }: { profile: Profile }) {
               onClick={(e) => { e.stopPropagation(); nextMedia(); }}
               className="absolute right-3 top-1/2 -translate-y-1/2 w-11 h-11 rounded-full bg-white/10 hover:bg-white/25 flex items-center justify-center text-white text-xl transition-colors z-10"
             >
-              ›
+              â€º
             </button>
           )}
         </div>

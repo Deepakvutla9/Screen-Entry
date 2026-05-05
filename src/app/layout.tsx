@@ -3,7 +3,7 @@ import './globals.css';
 import { Navbar } from '@/components/Navbar';
 
 export const metadata: Metadata = {
-  title: 'Screen Entry — Telugu Cinema Casting Platform',
+  title: 'Screen Entry - Telugu Cinema Casting Platform',
   description: 'Connecting talent with big screens. The premium casting platform for the Telugu film industry.',
 };
 
@@ -20,7 +20,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
                 Screen <span className="text-amber-400">Entry</span>
               </h1>
             </div>
-            <p className="text-slate-400 text-sm">© 2026 Screen Entry. Empowering the Telugu film fraternity.</p>
+            <p className="text-slate-400 text-sm">&copy; 2026 Screen Entry. Empowering the Telugu film fraternity.</p>
             <div className="flex gap-6">
               <a href="#" className="text-sm text-slate-500 hover:text-amber-400 transition-colors">Privacy</a>
               <a href="#" className="text-sm text-slate-500 hover:text-amber-400 transition-colors">Terms</a>
