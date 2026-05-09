@@ -272,13 +272,23 @@ A feature is "done" only when:
 
 ## 12. Next Priorities (Suggested)
 
-1. **Admin panel + photo moderation** — see Section 13
-2. **Legal pages** — Privacy Policy, Terms, Grievance Officer — see Section 14
-3. **User lifecycle + subscriptions** — see Section 15
-4. **Move casting calls to Supabase** — create `casting_calls` table, replace `store.ts` mock reads/writes
-5. **Move applications to Supabase** — create `applications` table, replace mock store
-6. **Email notifications** — integrate Resend for casting call applications
-7. **Search / filters** — full-text search on actor profiles and casting calls
+1. **⚠️ Admin account setup (PENDING — blocked)** — see note below
+2. **Photo moderation wiring** — uploads go to moderation queue, not directly to profile
+3. **Legal pages** — Privacy Policy, Terms, Grievance Officer — see Section 14
+4. **User lifecycle + subscriptions** — see Section 15
+5. **Move casting calls to Supabase** — create `casting_calls` table, replace `store.ts` mock reads/writes
+6. **Move applications to Supabase** — create `applications` table, replace mock store
+7. **Email notifications** — integrate Resend for casting call applications
+8. **Search / filters** — full-text search on actor profiles and casting calls
+
+### ⚠️ Pending: Admin Account Setup
+- Admin panel is built and deployed at `https://www.screenentry.com/admin-saheb90-se26`
+- Currently `ADMIN_EMAILS` is set to `aamohammad0786@gmail.com` (shah saaheb's user profile)
+- **Blocked:** password for this account is not known
+- **To fix when ready:**
+  1. Either recover the password for `aamohammad0786@gmail.com` via forgot-password flow
+  2. Or create a brand new dedicated admin account (e.g. `screenentry.admin@gmail.com`), then update `ADMIN_EMAILS` in Vercel env vars and `.env.local`
+- Admin key is `ScreenEntryAdmin1` (stored in Vercel env var `ADMIN_SECRET_KEY`)
 
 ---
 
