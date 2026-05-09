@@ -1,28 +1,48 @@
-﻿'use client';
+'use client';
 
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { Search, MapPin, Users, Clock, CheckCircle2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Input } from '@/components/ui/input';
-import { getCastingCalls, applyToCall, getApplicationsForActor } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
+import { useRef } from 'react';
 import type { Profile } from '@/lib/supabase/client';
-import type { Application, CastingCall } from '@/types';
 
-export function CastingFeedClient({ profile }: { profile: Profile }) {
-  const [calls, setCalls] = useState<CastingCall[]>([]);
-  const [applications, setApplications] = useState<Application[]>([]);
+interface CastingCall {
+  id: string;
+  recruiter_id: string;
+  title: string;
+  description: string;
+  role_description: string;
+  age_range: string;
+  gender_preference?: string;
+  location: string;
+  budget?: string;
+  deadline: string;
+  created_at: string;
+}
+
+export function CastingFeedClient({ profile, initialCalls, appliedIds }: {
+  profile: Profile;
+  initialCalls: CastingCall[];
+  appliedIds: string[];
+}) {
+  const supabase = useRef(createClient()).current;
+  const [calls] = useState<CastingCall[]>(initialCalls);
+  const [applied, setApplied] = useState<Set<string>>(new Set(appliedIds));
+  const [loading, setLoading] = useState<string | null>(null);
   const [search, setSearch] = useState('');
 
-  useEffect(() => {
-    setCalls(getCastingCalls());
-    setApplications(getApplicationsForActor(profile.id));
-  }, [profile.id]);
-
-  const handleApply = (callId: string) => {
-    applyToCall(callId, profile.id);
-    setApplications(getApplicationsForActor(profile.id));
+  const handleApply = async (callId: string) => {
+    setLoading(callId);
+    await supabase.from('applications').insert({
+      casting_call_id: callId,
+      actor_id: profile.id,
+    });
+    setApplied((prev) => new Set([...prev, callId]));
+    setLoading(null);
   };
 
   const filtered = calls.filter((c) =>
@@ -56,24 +76,25 @@ export function CastingFeedClient({ profile }: { profile: Profile }) {
           </div>
         ) : (
           filtered.map((call) => {
-            const hasApplied = applications.some((a) => a.castingCallId === call.id);
+            const hasApplied = applied.has(call.id);
+            const isLoading = loading === call.id;
             return (
               <Card key={call.id} className="hover:border-[#8B1A1A]/30 transition-all group p-6">
                 <div className="flex flex-col md:flex-row gap-6">
                   <div className="flex-1">
                     <div className="flex items-start justify-between mb-2">
                       <h3 className="text-xl font-bold text-slate-900 group-hover:text-[#8B1A1A] transition-colors">{call.title}</h3>
-                      <Badge className="bg-amber-50 text-amber-800 border-emerald-100">{call.budget || 'Open Budget'}</Badge>
+                      <Badge className="bg-amber-50 text-amber-800 border-amber-100">{call.budget || 'Open Budget'}</Badge>
                     </div>
                     <div className="flex flex-wrap gap-4 text-sm text-slate-500 mb-4">
                       <span className="flex items-center gap-1.5"><MapPin size={14} /> {call.location}</span>
-                      <span className="flex items-center gap-1.5"><Users size={14} /> Age: {call.ageRange}</span>
+                      <span className="flex items-center gap-1.5"><Users size={14} /> Age: {call.age_range}</span>
                       <span className="flex items-center gap-1.5"><Clock size={14} /> Due: {new Date(call.deadline).toLocaleDateString()}</span>
                     </div>
                     <p className="text-slate-600 line-clamp-2 text-sm leading-relaxed mb-4">{call.description}</p>
                     <div className="bg-slate-50 rounded-lg p-3">
                       <p className="text-xs font-bold text-slate-400 uppercase tracking-wider mb-1">Role Detail</p>
-                      <p className="text-sm text-slate-700">{call.roleDescription}</p>
+                      <p className="text-sm text-slate-700">{call.role_description}</p>
                     </div>
                   </div>
                   <div className="md:w-40 flex md:flex-col items-center justify-center gap-3">
@@ -81,15 +102,15 @@ export function CastingFeedClient({ profile }: { profile: Profile }) {
                       <Button
                         className="w-full bg-[#8B1A1A] hover:bg-[#5C0808]"
                         variant={hasApplied ? 'ghost' : 'default'}
-                        disabled={hasApplied}
+                        disabled={hasApplied || isLoading}
                         onClick={() => handleApply(call.id)}
                       >
                         {hasApplied ? (
                           <span className="flex items-center gap-2"><CheckCircle2 size={16} /> Applied</span>
-                        ) : 'Apply Now'}
+                        ) : isLoading ? 'Applying…' : 'Apply Now'}
                       </Button>
                     ) : (
-                      <p className="text-xs text-center text-slate-400 italic">Login as Actor to apply</p>
+                      <p className="text-xs text-center text-slate-400 italic">Log in as Actor to apply</p>
                     )}
                   </div>
                 </div>

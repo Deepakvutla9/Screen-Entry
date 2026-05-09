@@ -1,6 +1,6 @@
 'use client';
 
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import Link from 'next/link';
 import {
   Plus, Briefcase, ChevronRight, Film, Tv, Theater,
@@ -19,9 +19,22 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Textarea } from '@/components/ui/textarea';
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
 import { cn } from '@/lib/utils';
-import { getCastingCalls, createCastingCall, getApplicationsForActor } from '@/lib/store';
+import { createClient } from '@/lib/supabase/client';
 import type { Profile } from '@/lib/supabase/client';
-import type { Application, CastingCall } from '@/types';
+import type { Application } from '@/types';
+
+interface CastingCall {
+  id: string;
+  recruiter_id: string;
+  title: string;
+  description: string;
+  role_description: string;
+  age_range: string;
+  location: string;
+  budget?: string;
+  deadline: string;
+  created_at: string;
+}
 
 function toEmbedUrl(url: string): string {
   try {
@@ -127,8 +140,11 @@ function ActorDashboard({ profile }: { profile: Profile }) {
   const currentMedia = lightboxIndex !== null ? mediaItems[lightboxIndex] : null;
 
   useEffect(() => {
-    setCalls(getCastingCalls());
-    setApplications(getApplicationsForActor(profile.id));
+    const supabase = createClient();
+    supabase.from('casting_calls').select('*').order('created_at', { ascending: false })
+      .then(({ data }) => setCalls(data ?? []));
+    supabase.from('applications').select('*').eq('actor_id', profile.id)
+      .then(({ data }) => setApplications((data ?? []) as Application[]));
   }, [profile.id]);
 
   const addCredit = (category: string, credit: Credit) =>
@@ -368,7 +384,7 @@ function ActorDashboard({ profile }: { profile: Profile }) {
               ) : (
                 <div className="space-y-2">
                   {applications.slice(0, 4).map((app) => {
-                    const call = calls.find((c) => c.id === app.castingCallId);
+                    const call = calls.find((c) => c.id === (app as unknown as { casting_call_id: string }).casting_call_id);
                     return (
                       <div key={app.id} className="flex items-center justify-between gap-2">
                         <p className="text-xs text-white/60 truncate">{call?.title ?? 'Unknown Role'}</p>
@@ -702,25 +718,31 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
   const [showCreateModal, setShowCreateModal] = useState(false);
   const [calls, setCalls] = useState<CastingCall[]>([]);
 
-  useEffect(() => { setCalls(getCastingCalls()); }, []);
+  const supabase = useRef(createClient()).current;
 
-  const myPosts = calls.filter((c) => c.recruiterId === profile.id);
+  useEffect(() => {
+    supabase.from('casting_calls').select('*').eq('recruiter_id', profile.id)
+      .order('created_at', { ascending: false })
+      .then(({ data }) => setCalls(data ?? []));
+  }, [profile.id, supabase]);
 
-  const handleCreateCall = (e: React.FormEvent<HTMLFormElement>) => {
+  const myPosts = calls;
+
+  const handleCreateCall = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const fd = new FormData(e.currentTarget);
-    createCastingCall({
-      recruiterId: profile.id,
+    const { data } = await supabase.from('casting_calls').insert({
+      recruiter_id: profile.id,
       title: fd.get('title') as string,
       description: fd.get('description') as string,
-      roleDescription: fd.get('roleDescription') as string,
-      ageRange: fd.get('ageRange') as string,
+      role_description: fd.get('roleDescription') as string,
+      age_range: fd.get('ageRange') as string,
       location: fd.get('location') as string,
       budget: fd.get('budget') as string,
       deadline: fd.get('deadline') as string,
-    });
+    }).select().single();
+    if (data) setCalls((prev) => [data, ...prev]);
     setShowCreateModal(false);
-    setCalls(getCastingCalls());
   };
 
   return (
@@ -806,10 +828,10 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
                     </div>
                     <span className="ml-3 text-[10px] px-2 py-1 rounded-full bg-amber-500/15 text-amber-400 border border-amber-500/20 font-medium flex-shrink-0">Active</span>
                   </div>
-                  <p className="text-xs text-white/40 line-clamp-2 mb-4">{call.roleDescription}</p>
+                  <p className="text-xs text-white/40 line-clamp-2 mb-4">{call.role_description}</p>
                   <div className="flex items-center justify-between">
                     <div className="flex gap-3 text-xs text-white/30">
-                      <span>Age: {call.ageRange}</span>
+                      <span>Age: {call.age_range}</span>
                       {call.budget && <span>· {call.budget}</span>}
                     </div>
                     <Button asChild variant="outline" size="sm"
