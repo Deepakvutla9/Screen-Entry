@@ -40,13 +40,8 @@ export function AuthForm({ mode }: { mode: Mode }) {
         setSignupDone(true);
         setLoading(false);
       } else {
-        const res = await fetch('/api/auth/login', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ email, password }),
-        });
-        const data = await res.json();
-        if (!res.ok) { setError(data.error ?? 'Login failed.'); setLoading(false); return; }
+        const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
+        if (signInError) { setError(signInError.message); setLoading(false); return; }
         window.location.href = '/dashboard';
       }
     } catch {
