@@ -14,5 +14,24 @@ export async function requireProfile(): Promise<Profile> {
     .single();
 
   if (!profile) redirect('/login');
-  return profile as Profile;
+
+  return {
+    id: profile.user_id,
+    name: profile.full_name ?? profile.username ?? 'User',
+    email: user.email ?? '',
+    role: profile.role,
+    location: profile.location ?? '',
+    age: profile.age_range ?? undefined,
+    height: profile.height ?? undefined,
+    skills: [],
+    languages: [],
+    video_reel: undefined,
+    company_name: undefined,
+    profile_photo: undefined,
+    photos: [],
+    instagram: profile.instagram_url ?? undefined,
+    twitter: undefined,
+    youtube: undefined,
+    website: profile.website ?? undefined,
+  } as Profile;
 }
