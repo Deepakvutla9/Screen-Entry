@@ -29,16 +29,16 @@ I am a non-technical founder building this solo with AI coding agents. I read co
 ## 3. Current State of the Project
 
 > **This section must be updated at the end of every session.**
-> Last updated: 2026-05-05
+> Last updated: 2026-05-09
 
 ### What's been built
 
 | Area | Status | Notes |
 |---|---|---|
 | Landing page | ✅ Done | Cinematic gold/red theme — hero, stats bar, steps, featured talent, casting calls, blog, CTA |
-| Auth — Email/Password | ✅ Done | Server-side login via `/api/auth/login`; server-side logout via `/api/auth/signout` |
+| Auth — Email/Password | ✅ Done | Browser-side `signInWithPassword`; server-side logout via `/api/auth/signout` |
 | Auth — Google OAuth | ❌ Removed | Removed — requires Google Cloud Console credit card setup which isn't ready |
-| Profiles table (Supabase) | ✅ Done | RLS enabled, auto-populated via DB trigger on signup |
+| Profiles table (Supabase) | ✅ Done | Recreated 2026-05-09 to match code schema; RLS enabled; trigger auto-creates on signup |
 | Profile settings | ✅ Done | Saves to Supabase; redirects to dashboard on save |
 | Avatar upload | ✅ Done | Supabase Storage, label+input pattern, cache-busted URL |
 | Portfolio photos | ✅ Done | Up to 5 photos, Supabase Storage, inline remove button |
@@ -51,6 +51,11 @@ I am a non-technical founder building this solo with AI coding agents. I read co
 | Navbar sign out | ✅ Done | Visible "Sign out" button on all pages; uses server-side signout route |
 | Casting calls in Supabase | ❌ Not started | Still using localStorage mock store |
 | Applications in Supabase | ❌ Not started | Still using localStorage mock store |
+| Admin panel | ❌ Not started | Planned — see Section 13 |
+| Photo moderation | ❌ Not started | Planned — see Section 13 |
+| User lifecycle management | ❌ Not started | Planned — see Section 13 |
+| Legal pages | ❌ Not started | Privacy Policy, Terms, Grievance Officer — see Section 14 |
+| Subscriptions | ❌ Not started | Razorpay integration planned — see Section 15 |
 | Messaging | ❌ Not started | — |
 
 ### Current tech stack
@@ -267,8 +272,169 @@ A feature is "done" only when:
 
 ## 12. Next Priorities (Suggested)
 
-1. **Move casting calls to Supabase** — create `casting_calls` table, replace `store.ts` mock reads/writes
-2. **Move applications to Supabase** — create `applications` table, replace mock store
-3. **Activate Google OAuth** — complete Google Cloud Console + Supabase dashboard config when ready
-4. **Email notifications** — integrate Resend for casting call applications
-5. **Search / filters** — full-text search on actor profiles and casting calls
+1. **Admin panel + photo moderation** — see Section 13
+2. **Legal pages** — Privacy Policy, Terms, Grievance Officer — see Section 14
+3. **User lifecycle + subscriptions** — see Section 15
+4. **Move casting calls to Supabase** — create `casting_calls` table, replace `store.ts` mock reads/writes
+5. **Move applications to Supabase** — create `applications` table, replace mock store
+6. **Email notifications** — integrate Resend for casting call applications
+7. **Search / filters** — full-text search on actor profiles and casting calls
+
+---
+
+## 13. Admin Panel
+
+### Access Model (Three-Layer Security)
+- **Layer 1 — Secret URL:** Admin panel lives at `/admin-[secret-string]`. This path is never linked anywhere in the UI. If you don't know the URL, you can't even find the page.
+- **Layer 2 — Email whitelist:** Even if someone reaches the URL, only `deepakvutla9@gmail.com` (and any other whitelisted emails) can access it. Anyone else sees a 404.
+- **Layer 3 — Admin key:** A standard secret key stored in `.env.local` as `ADMIN_SECRET_KEY`. Must be entered on first access per session. Long random string — never stored in the database.
+
+The secret URL path is stored in `.env.local` as `ADMIN_URL_SLUG`. Never hardcode it in source.
+
+### Admin Dashboard Features
+
+#### Analytics
+- Total users (actors vs recruiters)
+- New signups this week / this month
+- Photos pending moderation
+- Total casting calls posted
+- Suspended / pending deletion accounts count
+
+#### Photo Moderation
+- When a user uploads a photo it goes into **pending** state — not visible on public profiles
+- Admin sees a queue of all pending photos with the uploader's name
+- Admin can **Approve** (makes photo public) or **Reject** (deletes from storage + DB)
+- Every approve/reject is logged with timestamp and admin email (audit log — IT Rules 2021 compliance)
+- Target: review within 36 hours (IT Rules 2021 requirement)
+
+#### User Management
+- View all users with their status, role, signup date, subscription status
+- **Suspend** — hides profile from public, user cannot log in, reversible
+- **Reinstate** — restores a suspended account
+- **Hard Delete** — permanently deletes profile + storage files, requires double confirmation, one at a time only
+- Suspended accounts auto-delete after 90 days (background job via Inngest)
+
+### Database changes required
+```sql
+-- Add status to profiles
+ALTER TABLE profiles ADD COLUMN status TEXT DEFAULT 'active' 
+  CHECK (status IN ('active', 'suspended', 'pending_deletion'));
+ALTER TABLE profiles ADD COLUMN suspended_at TIMESTAMPTZ;
+ALTER TABLE profiles ADD COLUMN delete_after TIMESTAMPTZ; -- suspended_at + 90 days
+
+-- Photo moderation table
+CREATE TABLE photo_moderation (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  profile_id UUID REFERENCES profiles(id) ON DELETE CASCADE,
+  photo_url TEXT NOT NULL,
+  status TEXT DEFAULT 'pending' CHECK (status IN ('pending', 'approved', 'rejected')),
+  reviewed_by TEXT, -- admin email
+  reviewed_at TIMESTAMPTZ,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+
+-- Admin audit log
+CREATE TABLE admin_audit_log (
+  id UUID PRIMARY KEY DEFAULT uuid_generate_v4(),
+  admin_email TEXT NOT NULL,
+  action TEXT NOT NULL, -- 'approve_photo', 'reject_photo', 'suspend_user', 'reinstate_user', 'delete_user'
+  target_id UUID, -- profile_id or photo_moderation_id
+  notes TEXT,
+  created_at TIMESTAMPTZ DEFAULT now()
+);
+```
+
+### New files to create
+```
+src/
+├── app/
+│   └── [admin-slug]/
+│       ├── page.tsx           admin login (key entry)
+│       ├── dashboard/page.tsx analytics overview
+│       ├── photos/page.tsx    photo moderation queue
+│       └── users/page.tsx     user management
+├── components/
+│   └── admin/
+│       ├── AdminLayout.tsx
+│       ├── PhotoModerationQueue.tsx
+│       └── UserManagementTable.tsx
+└── lib/
+    └── admin.ts               requireAdmin() guard
+```
+
+---
+
+## 14. Indian Legal Compliance
+
+Platform primarily serves Indian users. Compliance with **IT Act 2000** and **IT (Intermediary Guidelines and Digital Media Ethics Code) Rules 2021** is mandatory before accepting payments.
+
+### Required pages
+
+| Page | URL | Deadline |
+|---|---|---|
+| Privacy Policy | `/privacy` | Before paid signups |
+| Terms of Service | `/terms` | Before paid signups |
+| Grievance Officer | `/grievance` | Immediately (IT Rules 2021) |
+| Contact Us | `/contact` | Immediately |
+
+### Grievance Officer (IT Rules 2021 — Mandatory)
+- Must be an Indian resident
+- Name and contact details publicly visible
+- Must acknowledge complaints within **24 hours**
+- Must resolve within **15 days**
+- For now: founder's name + email on `/grievance` page
+
+### Content Removal (IT Rules 2021)
+- Objectionable content must be removed within **36 hours** of being flagged
+- Photo moderation system (Section 13) fulfills this requirement
+- Keep audit logs of all removals
+
+### Data Deletion (IT Rules 2021)
+- User data must be deleted within **72 hours** of a formal deletion request
+- Add "Delete My Account" option in profile settings
+- Deletion removes: profile row, storage files, auth user
+
+### Privacy Policy must state
+- What data is collected (name, email, photos, location)
+- How it is used (casting platform — connecting actors and recruiters)
+- Data retention period (active accounts indefinitely; suspended accounts 90 days then deleted)
+- User rights (access, correction, deletion)
+- Grievance Officer contact details
+
+---
+
+## 15. Subscriptions & User Lifecycle
+
+### Profile Lifecycle States
+
+| State | Meaning | Visible to public? | Can log in? |
+|---|---|---|---|
+| `active` | Paid or in free trial | Yes | Yes |
+| `suspended` | Payment lapsed or admin action | No | No |
+| `pending_deletion` | Suspended 90+ days | No | No |
+| Deleted | Hard deleted | — | — |
+
+### Flow
+1. User signs up → **active** (free trial, duration TBD)
+2. Trial ends → email warning sent (Resend) → **suspended** if no payment
+3. 90 days suspended → auto **hard delete** (Inngest background job cleans storage + DB + auth)
+4. Admin can manually move any user between states at any time
+
+### User-initiated deletion
+- "Delete My Account" button in profile settings
+- Triggers immediate hard delete (profile + storage + auth user)
+- Must complete within 72 hours (IT Rules 2021)
+- Confirmation email sent to user
+
+### Payment (when ready)
+- Use **Razorpay** (RBI approved)
+- Never store card data — handled entirely by Razorpay
+- Issue proper GST invoices
+- Subscription plans TBD (monthly/yearly for actors; per-posting or subscription for recruiters)
+
+### Email notifications (Resend)
+- Trial ending warning (7 days before)
+- Account suspended notice
+- Deletion warning (30 days before auto-delete)
+- Payment confirmation
+- Grievance acknowledgement (within 24 hours)
