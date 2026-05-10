@@ -283,11 +283,8 @@ A feature is "done" only when:
 
 ### ⚠️ Pending: Admin Account Setup
 - Admin panel is built and deployed at `https://www.screenentry.com/admin-saheb90-se26`
-- Currently `ADMIN_EMAILS` is set to `aamohammad0786@gmail.com` (shah saaheb's user profile)
-- **Blocked:** password for this account is not known
-- **To fix when ready:**
-  1. Either recover the password for `aamohammad0786@gmail.com` via forgot-password flow
-  2. Or create a brand new dedicated admin account (e.g. `screenentry.admin@gmail.com`), then update `ADMIN_EMAILS` in Vercel env vars and `.env.local`
+- `ADMIN_EMAILS` is set to `shahcineworld@gmail.com` (dedicated admin account)
+- **To activate:** sign up at `https://www.screenentry.com/signup` with `shahcineworld@gmail.com`, then update `ADMIN_EMAILS` in Vercel env vars to match
 - Admin key is `ScreenEntryAdmin1` (stored in Vercel env var `ADMIN_SECRET_KEY`)
 
 ---
