@@ -2,7 +2,8 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Camera, Video, CheckCircle2, Loader2, ArrowLeft, X, ImagePlus, Instagram, Youtube, Globe, Twitter, User, Film, Briefcase } from 'lucide-react';
+import { Camera, Video, CheckCircle2, Loader2, ArrowLeft, X, ImagePlus, Instagram, Youtube, Globe, Twitter, User, Film, Briefcase, Plus } from 'lucide-react';
+import { Textarea } from '@/components/ui/textarea';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -48,6 +49,8 @@ export function ProfileClient({ profile }: { profile: Profile }) {
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
   const [error, setError] = useState('');
+  const [showAuditionModal, setShowAuditionModal] = useState(false);
+  const [auditionPosted, setAuditionPosted] = useState(false);
 
   const handlePhotoUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
@@ -415,8 +418,106 @@ export function ProfileClient({ profile }: { profile: Profile }) {
             </div>
 
           </form>
+
+          {/* Audition Call Section for Directors & Recruiters */}
+          {(role === 'director' || role === 'recruiter') && (
+            <div className="pt-6 border-t border-slate-100">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h3 className="text-sm font-bold text-slate-700 uppercase tracking-widest">Audition / Casting Calls</h3>
+                  <p className="text-xs text-slate-400 mt-0.5">Post a new audition call visible to all actors</p>
+                </div>
+                <Button
+                  type="button"
+                  onClick={() => setShowAuditionModal(true)}
+                  className="bg-[#8B1A1A] hover:bg-[#5C0808] gap-2"
+                >
+                  <Plus size={16} /> Create Audition Call
+                </Button>
+              </div>
+            </div>
+          )}
+
         </div>
       </Card>
+
+      {/* Audition Modal */}
+      {showAuditionModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-6">
+          <div className="absolute inset-0 bg-black/60 backdrop-blur-sm" onClick={() => setShowAuditionModal(false)} />
+          <div className="relative w-full max-w-2xl max-h-[90vh] overflow-y-auto">
+            <Card className="p-8 shadow-2xl">
+              <div className="flex items-center justify-between mb-6">
+                <h2 className="text-2xl font-bold text-slate-900">Create Audition Call</h2>
+                <button onClick={() => setShowAuditionModal(false)} className="text-slate-400 hover:text-slate-700">
+                  <X size={20} />
+                </button>
+              </div>
+              <form
+                className="space-y-4"
+                onSubmit={async (e) => {
+                  e.preventDefault();
+                  const fd = new FormData(e.currentTarget);
+                  await supabase.from('casting_calls').insert({
+                    recruiter_id: profile.id,
+                    title: fd.get('title') as string,
+                    description: fd.get('description') as string,
+                    role_description: fd.get('roleDescription') as string,
+                    age_range: fd.get('ageRange') as string,
+                    location: fd.get('location') as string,
+                    budget: fd.get('budget') as string,
+                    deadline: fd.get('deadline') as string,
+                  });
+                  setShowAuditionModal(false);
+                  setAuditionPosted(true);
+                  setTimeout(() => setAuditionPosted(false), 3000);
+                }}
+              >
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                  <div className="md:col-span-2">
+                    <Label htmlFor="a-title" className="mb-1">Title</Label>
+                    <Input id="a-title" name="title" required placeholder="e.g. Lead Hero for Feature Film" />
+                  </div>
+                  <div>
+                    <Label htmlFor="a-location" className="mb-1">Location</Label>
+                    <Input id="a-location" name="location" required placeholder="Hyderabad" />
+                  </div>
+                  <div>
+                    <Label htmlFor="a-budget" className="mb-1">Budget</Label>
+                    <Input id="a-budget" name="budget" placeholder="₹50k – ₹1L" />
+                  </div>
+                  <div>
+                    <Label htmlFor="a-ageRange" className="mb-1">Age Range</Label>
+                    <Input id="a-ageRange" name="ageRange" required placeholder="18–25" />
+                  </div>
+                  <div>
+                    <Label htmlFor="a-deadline" className="mb-1">Deadline</Label>
+                    <Input id="a-deadline" name="deadline" type="date" required />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="a-roleDescription" className="mb-1">Role Description</Label>
+                    <Textarea id="a-roleDescription" name="roleDescription" required rows={2} placeholder="Describe the role..." />
+                  </div>
+                  <div className="md:col-span-2">
+                    <Label htmlFor="a-description" className="mb-1">Project Description</Label>
+                    <Textarea id="a-description" name="description" required rows={3} placeholder="Overall project details..." />
+                  </div>
+                </div>
+                <div className="flex gap-4 pt-4">
+                  <Button type="button" variant="ghost" className="flex-1" onClick={() => setShowAuditionModal(false)}>Cancel</Button>
+                  <Button type="submit" className="flex-1 bg-[#8B1A1A] hover:bg-[#5C0808]">Post Audition Call</Button>
+                </div>
+              </form>
+            </Card>
+          </div>
+        </div>
+      )}
+
+      {auditionPosted && (
+        <div className="fixed bottom-6 right-6 z-50 bg-green-600 text-white px-5 py-3 rounded-xl shadow-lg flex items-center gap-2 font-medium">
+          <CheckCircle2 size={18} /> Audition call posted successfully!
+        </div>
+      )}
     </div>
   );
 }
