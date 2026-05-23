@@ -769,11 +769,11 @@ function RecruiterDashboard({ profile }: { profile: Profile }) {
           <div className="pb-1 flex-1 flex flex-col sm:flex-row sm:items-end sm:justify-between gap-4">
             <div>
               <Badge className="mb-1 bg-amber-500/20 text-amber-400 border-amber-500/30 text-[10px] uppercase tracking-widest font-bold px-2">
-                Recruiter
+                {profile.role === 'director' ? 'Director' : 'Recruiter'}
               </Badge>
               <h1 className="text-3xl font-bold text-white">{profile.company_name ?? profile.name}</h1>
               <p className="text-white/40 text-sm mt-0.5 flex items-center gap-2">
-                Casting Director / Recruiter
+                {profile.role === 'director' ? 'Director' : 'Casting Director / Recruiter'}
                 {profile.location && <><span className="text-white/20">·</span><span className="flex items-center gap-1"><MapPin size={12} />{profile.location}</span></>}
               </p>
             </div>
