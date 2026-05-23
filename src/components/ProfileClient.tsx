@@ -2,7 +2,7 @@
 
 import { useRef, useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Camera, Video, CheckCircle2, Loader2, ArrowLeft, X, ImagePlus, Instagram, Youtube, Globe, Twitter } from 'lucide-react';
+import { Camera, Video, CheckCircle2, Loader2, ArrowLeft, X, ImagePlus, Instagram, Youtube, Globe, Twitter, User, Film, Briefcase } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
@@ -23,6 +23,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
   const router = useRouter();
 
   const [name, setName] = useState(profile.name ?? '');
+  const [role, setRole] = useState<'actor' | 'recruiter' | 'director'>(profile.role);
   const [age, setAge] = useState(String(profile.age ?? ''));
   const [height, setHeight] = useState(profile.height ?? '');
   const [location, setLocation] = useState(profile.location ?? '');
@@ -125,9 +126,10 @@ export function ProfileClient({ profile }: { profile: Profile }) {
     const updates: Partial<Profile> = {
       name: name.trim(),
       location: location.trim(),
+      role,
     };
 
-    if (profile.role === 'actor') {
+    if (role === 'actor') {
       updates.age = age ? parseInt(age) : undefined;
       updates.height = height.trim() || undefined;
       updates.video_reel = videoReel.trim() || undefined;
@@ -199,7 +201,7 @@ export function ProfileClient({ profile }: { profile: Profile }) {
               <h3 className="text-xl font-bold">{profile.name}</h3>
               <p className="text-slate-500">{profile.email}</p>
               <Badge className="bg-[#8B1A1A] text-white border-none uppercase tracking-widest">
-                {profile.role}
+                {role}
               </Badge>
             </div>
           </div>
@@ -228,7 +230,29 @@ export function ProfileClient({ profile }: { profile: Profile }) {
               />
             </div>
 
-            {profile.role === 'actor' ? (
+            {/* Role Selector */}
+            <div className="md:col-span-2">
+              <Label className="mb-1.5">Role</Label>
+              <div className="grid grid-cols-3 gap-3 mt-2">
+                {([
+                  { value: 'actor', label: 'Actor', Icon: User, color: 'border-[#8B1A1A] bg-[#8B1A1A]/5 text-[#8B1A1A]' },
+                  { value: 'director', label: 'Director', Icon: Film, color: 'border-purple-600 bg-purple-50 text-purple-600' },
+                  { value: 'recruiter', label: 'Recruiter', Icon: Briefcase, color: 'border-amber-600 bg-amber-50 text-amber-600' },
+                ] as const).map(({ value, label, Icon, color }) => (
+                  <button
+                    key={value}
+                    type="button"
+                    onClick={() => setRole(value)}
+                    className={`py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all ${role === value ? color : 'border-slate-100 hover:border-slate-200'}`}
+                  >
+                    <Icon size={20} className={role === value ? '' : 'text-slate-400'} />
+                    <span className={`text-sm font-bold ${role === value ? '' : 'text-slate-600'}`}>{label}</span>
+                  </button>
+                ))}
+              </div>
+            </div>
+
+            {role === 'actor' ? (
               <>
                 <div>
                   <Label htmlFor="age" className="mb-1.5">Age</Label>
@@ -288,12 +312,14 @@ export function ProfileClient({ profile }: { profile: Profile }) {
               </>
             ) : (
               <div>
-                <Label htmlFor="companyName" className="mb-1.5">Company / Production Name</Label>
+                <Label htmlFor="companyName" className="mb-1.5">
+                  {role === 'director' ? 'Production Company' : 'Company / Production Name'}
+                </Label>
                 <Input
                   id="companyName"
                   value={companyName}
                   onChange={(e) => setCompanyName(e.target.value)}
-                  placeholder="e.g. Mythri Movie Makers"
+                  placeholder={role === 'director' ? 'e.g. Hombale Films' : 'e.g. Mythri Movie Makers'}
                 />
               </div>
             )}

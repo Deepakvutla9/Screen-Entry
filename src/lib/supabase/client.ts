@@ -7,7 +7,7 @@ export function createClient() {
   );
 }
 
-export type UserRole = 'actor' | 'recruiter';
+export type UserRole = 'actor' | 'recruiter' | 'director';
 
 export interface Profile {
   id: string;

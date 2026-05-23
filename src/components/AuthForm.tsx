@@ -1,7 +1,7 @@
 'use client';
 
 import { useRef, useState } from 'react';
-import { CheckCircle2, User as UserIcon, Briefcase, KeyRound } from 'lucide-react';
+import { CheckCircle2, User as UserIcon, Briefcase, KeyRound, Film } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Card } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
@@ -17,7 +17,7 @@ export function AuthForm({ mode }: { mode: Mode }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [name, setName] = useState('');
-  const [role, setRole] = useState<'actor' | 'recruiter'>('actor');
+  const [role, setRole] = useState<'actor' | 'recruiter' | 'director'>('actor');
   const [inviteCode, setInviteCode] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
@@ -117,10 +117,14 @@ export function AuthForm({ mode }: { mode: Mode }) {
               <>
                 <div>
                   <Label className="mb-1.5">I am joining as</Label>
-                  <div className="grid grid-cols-2 gap-3 mt-2">
+                  <div className="grid grid-cols-3 gap-3 mt-2">
                     <button type="button" onClick={() => setRole('actor')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'actor' ? 'border-[#8B1A1A] bg-[#8B1A1A]/5' : 'border-slate-100 hover:border-slate-200')}>
                       <UserIcon size={20} className={role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-400'} />
                       <span className={cn('text-sm font-bold', role === 'actor' ? 'text-[#8B1A1A]' : 'text-slate-600')}>Actor</span>
+                    </button>
+                    <button type="button" onClick={() => setRole('director')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'director' ? 'border-purple-600 bg-purple-50' : 'border-slate-100 hover:border-slate-200')}>
+                      <Film size={20} className={role === 'director' ? 'text-purple-600' : 'text-slate-400'} />
+                      <span className={cn('text-sm font-bold', role === 'director' ? 'text-purple-600' : 'text-slate-600')}>Director</span>
                     </button>
                     <button type="button" onClick={() => setRole('recruiter')} className={cn('py-3 px-4 rounded-lg border-2 flex flex-col items-center gap-2 transition-all', role === 'recruiter' ? 'border-amber-600 bg-amber-50' : 'border-slate-100 hover:border-slate-200')}>
                       <Briefcase size={20} className={role === 'recruiter' ? 'text-amber-600' : 'text-slate-400'} />
