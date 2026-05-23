@@ -3,7 +3,21 @@ import { createClient } from '@/lib/supabase/server';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const RSS_URL = 'https://www.greatandhra.com/feed/';
-const MAX_ARTICLES = 10;
+const MAX_ARTICLES = 30;
+
+const KEYWORDS = [
+  'audio launch', 'trailer', 'producer', 'new release', 'glimpse', 'teaser',
+  'premier', 'premiere', 'actor', 'actress', 'box office', 'post production',
+  'pre production', 'production', 'heroine', 'hero', 'music director', 'director',
+  'release date', 'book my show', 'script', 'writer', 'story', 'screenplay',
+  'direction', 'acting', 'nizam', 'exhibitor', 'distributor', 'ott', 'web series',
+  'film', 'movie', 'cinema', 'shoot', 'casting', 'audition',
+];
+
+function matchesKeywords(title: string, description: string): boolean {
+  const text = `${title} ${description}`.toLowerCase();
+  return KEYWORDS.some((kw) => text.includes(kw));
+}
 
 async function fetchRSS(): Promise<{ title: string; link: string; description: string; pubDate: string }[]> {
   const res = await fetch(RSS_URL, { next: { revalidate: 0 } });
@@ -83,6 +97,11 @@ async function runFetch() {
 
   for (const item of rssItems) {
     if (existingTitles.has(item.title.toLowerCase())) {
+      results.skipped++;
+      continue;
+    }
+
+    if (!matchesKeywords(item.title, item.description)) {
       results.skipped++;
       continue;
     }
