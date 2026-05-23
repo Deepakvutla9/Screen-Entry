@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
-const GEMINI_API_URL = 'https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent';
+const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const RSS_URL = 'https://www.greatandhra.com/feed/';
 const MAX_ARTICLES = 10;
 
@@ -26,8 +26,8 @@ async function fetchRSS(): Promise<{ title: string; link: string; description: s
   return items;
 }
 
-async function rewriteWithGemini(title: string, content: string): Promise<{ title: string; excerpt: string; body: string; category: string } | null> {
-  const apiKey = process.env.GEMINI_API_KEY;
+async function rewriteWithGroq(title: string, content: string): Promise<{ title: string; excerpt: string; body: string; category: string } | null> {
+  const apiKey = process.env.GROQ_API_KEY;
   if (!apiKey) return null;
 
   const prompt = `You are a writer for Screen Entry, a Telugu film industry casting platform.
@@ -37,7 +37,7 @@ Make it engaging, original, and relevant to actors, directors and film enthusias
 Original title: ${title}
 Original content: ${content}
 
-Respond in this exact JSON format:
+Respond in this exact JSON format (no markdown, just raw JSON):
 {
   "title": "Your rewritten headline",
   "excerpt": "2-3 sentence summary for the home page preview",
@@ -45,17 +45,22 @@ Respond in this exact JSON format:
   "category": "One of: Industry News, Casting, Behind the Scenes, Watchlist, Interviews, Events"
 }`;
 
-  const res = await fetch(`${GEMINI_API_URL}?key=${apiKey}`, {
+  const res = await fetch(GROQ_API_URL, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
+    headers: {
+      'Content-Type': 'application/json',
+      'Authorization': `Bearer ${apiKey}`,
+    },
     body: JSON.stringify({
-      contents: [{ parts: [{ text: prompt }] }],
-      generationConfig: { temperature: 0.7, maxOutputTokens: 1024 },
+      model: 'llama3-8b-8192',
+      messages: [{ role: 'user', content: prompt }],
+      temperature: 0.7,
+      max_tokens: 1024,
     }),
   });
 
   const data = await res.json();
-  const text = data?.candidates?.[0]?.content?.parts?.[0]?.text ?? '';
+  const text = data?.choices?.[0]?.message?.content ?? '';
 
   try {
     const jsonMatch = text.match(/\{[\s\S]*\}/);
@@ -82,7 +87,7 @@ async function runFetch() {
       continue;
     }
 
-    const rewritten = await rewriteWithGemini(item.title, item.description);
+    const rewritten = await rewriteWithGroq(item.title, item.description);
     if (!rewritten) { results.failed++; continue; }
 
     // Skip if rewritten title already exists
