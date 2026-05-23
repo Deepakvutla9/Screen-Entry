@@ -62,8 +62,8 @@ export default function LandingPage() {
               </Link>
             </Button>
             <Button asChild size="lg" variant="outline" className="h-14 px-8 text-base font-semibold border-white/20 text-white bg-white/5 hover:bg-white/10 backdrop-blur-sm">
-              <Link href="/browse" className="flex items-center gap-2">
-                <Play size={16} fill="currentColor" /> Browse Talent
+              <Link href="/explore" className="flex items-center gap-2">
+                <Play size={16} fill="currentColor" /> Explore Feed
               </Link>
             </Button>
           </div>

@@ -68,6 +68,9 @@ export function Navbar() {
           </>
         ) : (
           <div className="flex items-center gap-3">
+            <Link href="/explore" className="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
+              Explore Feed
+            </Link>
             <Link href="/login" className="text-sm font-medium text-slate-300 hover:text-amber-400 transition-colors">
               Sign In
             </Link>
