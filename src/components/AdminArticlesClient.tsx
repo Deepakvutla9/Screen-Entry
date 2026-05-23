@@ -7,7 +7,7 @@ import { Input } from '@/components/ui/input';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Card } from '@/components/ui/card';
-import { Plus, Trash2, Eye, EyeOff, X, RefreshCw } from 'lucide-react';
+import { Plus, Trash2, Eye, EyeOff, X } from 'lucide-react';
 
 interface Article {
   id: string;
@@ -28,25 +28,10 @@ export function AdminArticlesClient({ articles: initial }: { articles: Article[]
   const [articles, setArticles] = useState<Article[]>(initial);
   const [showForm, setShowForm] = useState(false);
   const [saving, setSaving] = useState(false);
-  const [fetching, setFetching] = useState(false);
-  const [fetchResult, setFetchResult] = useState<string | null>(null);
   const [form, setForm] = useState({
     title: '', excerpt: '', content: '', author: 'Cinema Desk',
     category: 'Industry News', image_url: '',
   });
-
-  const handleFetchNews = async () => {
-    setFetching(true);
-    setFetchResult(null);
-    const res = await fetch('/api/news/fetch', {
-      method: 'POST',
-      headers: { 'x-cron-secret': 'ScreenEntryAdmin1' },
-    });
-    const data = await res.json();
-    setFetchResult(`Done — ${data.saved} saved, ${data.skipped} skipped, ${data.failed} failed`);
-    setFetching(false);
-    window.location.reload();
-  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -81,19 +66,11 @@ export function AdminArticlesClient({ articles: initial }: { articles: Article[]
           <p className="text-slate-400 text-sm mt-1">{articles.length} articles · shown on home page</p>
         </div>
         <div className="flex items-center gap-3">
-          <Button onClick={handleFetchNews} disabled={fetching} variant="outline" className="border-amber-500/40 text-amber-400 hover:bg-amber-500/10 gap-2">
-            <RefreshCw size={16} className={fetching ? 'animate-spin' : ''} />
-            {fetching ? 'Fetching...' : 'Fetch Latest News'}
-          </Button>
           <Button onClick={() => setShowForm(true)} className="bg-amber-500 hover:bg-amber-400 text-black font-bold gap-2">
             <Plus size={16} /> New Article
           </Button>
         </div>
       </div>
-
-      {fetchResult && (
-        <div className="mb-6 p-4 rounded-xl bg-green-900/20 border border-green-900/40 text-green-400 text-sm">{fetchResult}</div>
-      )}
 
       {/* New Article Form */}
       {showForm && (
