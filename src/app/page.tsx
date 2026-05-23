@@ -3,7 +3,8 @@ import Image from 'next/image';
 import { ArrowRight, Play, Star, CheckCircle, Clapperboard, Users, Film, TrendingUp } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
-import { FEATURED_ACTORS, BLOG_POSTS, SEED_CASTING_CALLS } from '@/lib/data';
+import { FEATURED_ACTORS, SEED_CASTING_CALLS } from '@/lib/data';
+import { createClient } from '@/lib/supabase/server';
 
 const STATS = [
   { value: '2,400+', label: 'Registered Actors' },
@@ -25,7 +26,17 @@ const TRUST = [
   { icon: TrendingUp, text: 'Direct recruiter contact' },
 ];
 
-export default function LandingPage() {
+export default async function LandingPage() {
+  const supabase = await createClient();
+  const { data: articles } = await supabase
+    .from('articles')
+    .select('*')
+    .eq('published', true)
+    .order('created_at', { ascending: false })
+    .limit(3);
+
+  const blogPosts = articles ?? [];
+
   return (
     <div className="flex flex-col bg-white">
 
@@ -249,21 +260,28 @@ export default function LandingPage() {
               View all <ArrowRight size={16} />
             </button>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
-            {BLOG_POSTS.map((post) => (
-              <div key={post.id} className="group cursor-pointer">
-                <div className="aspect-[16/10] overflow-hidden rounded-2xl relative mb-5 bg-slate-100">
-                  <Image src={post.imageUrl} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
-                  <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
-                  <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-xs font-bold text-slate-700 px-2.5 py-1 rounded-full">{post.category}</span>
+          {blogPosts.length === 0 ? (
+            <div className="text-center py-16 text-slate-400">No articles published yet. Check back soon.</div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+              {blogPosts.map((post) => (
+                <div key={post.id} className="group cursor-pointer">
+                  <div className="aspect-[16/10] overflow-hidden rounded-2xl relative mb-5 bg-slate-100">
+                    {post.image_url
+                      ? <Image src={post.image_url} alt={post.title} fill sizes="(max-width: 768px) 100vw, 33vw" className="object-cover group-hover:scale-105 transition-transform duration-700" />
+                      : <div className="w-full h-full bg-gradient-to-br from-[#8B1A1A]/20 to-amber-900/20 flex items-center justify-center"><Film size={32} className="text-slate-300" /></div>
+                    }
+                    <div className="absolute inset-0 bg-gradient-to-t from-black/30 to-transparent" />
+                    <span className="absolute top-3 left-3 bg-white/90 backdrop-blur-sm text-xs font-bold text-slate-700 px-2.5 py-1 rounded-full">{post.category}</span>
+                  </div>
+                  <p className="text-xs text-slate-400 font-medium mb-2">{new Date(post.created_at).toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' })}</p>
+                  <h4 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#8B1A1A] transition-colors line-clamp-2 leading-snug">{post.title}</h4>
+                  <p className="text-slate-500 text-sm line-clamp-2 leading-relaxed">{post.excerpt}</p>
+                  <p className="text-xs text-slate-400 font-semibold mt-3">By {post.author}</p>
                 </div>
-                <p className="text-xs text-slate-400 font-medium mb-2">{new Date(post.date).toLocaleDateString('en-IN', { year:'numeric', month:'long', day:'numeric' })}</p>
-                <h4 className="text-lg font-bold text-slate-900 mb-2 group-hover:text-[#8B1A1A] transition-colors line-clamp-2 leading-snug">{post.title}</h4>
-                <p className="text-slate-500 text-sm line-clamp-2 leading-relaxed">{post.excerpt}</p>
-                <p className="text-xs text-slate-400 font-semibold mt-3">By {post.author}</p>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

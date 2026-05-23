@@ -41,6 +41,7 @@ export default async function AdminDashboardPage() {
           <Link href={`/${process.env.ADMIN_URL_SLUG}/dashboard`} className="text-sm text-amber-400 font-medium">Dashboard</Link>
           <Link href={`/${process.env.ADMIN_URL_SLUG}/photos`} className="text-sm text-slate-300 hover:text-amber-400">Photo Moderation</Link>
           <Link href={`/${process.env.ADMIN_URL_SLUG}/users`} className="text-sm text-slate-300 hover:text-amber-400">Users</Link>
+          <Link href={`/${process.env.ADMIN_URL_SLUG}/articles`} className="text-sm text-slate-300 hover:text-amber-400">Articles</Link>
         </div>
       </nav>
 
