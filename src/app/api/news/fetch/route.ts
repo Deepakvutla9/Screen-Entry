@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { createClient } from '@/lib/supabase/server';
 
+export const maxDuration = 60;
+
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/chat/completions';
 const RSS_URL = 'https://www.greatandhra.com/feed/';
 const MAX_ARTICLES = 30;
@@ -66,7 +68,7 @@ Respond in this exact JSON format (no markdown, just raw JSON):
       'Authorization': `Bearer ${apiKey}`,
     },
     body: JSON.stringify({
-      model: 'llama3-8b-8192',
+      model: 'llama-3.1-8b-instant',
       messages: [{ role: 'user', content: prompt }],
       temperature: 0.7,
       max_tokens: 1024,
