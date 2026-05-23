@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, Play, MapPin, Film, Tv, Theater, Mic, Music, Star } from 'lucide-react';
+import { ArrowLeft, Play, MapPin, Film, Tv, Theater, Mic, Music, Star, Mail, Phone, X } from 'lucide-react';
 import { Card } from '@/components/ui/card';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
@@ -46,7 +46,9 @@ const CREDIT_TABS = [
   { value: 'music', label: 'Music', icon: Music },
 ];
 
-export function PublicActorProfile({ profile }: { profile: Profile }) {
+export function PublicActorProfile({ profile, viewerRole }: { profile: Profile; viewerRole?: string | null }) {
+  const canContact = viewerRole === 'director' || viewerRole === 'recruiter';
+  const [showContact, setShowContact] = useState(false);
   const [lightboxIndex, setLightboxIndex] = useState<number | null>(null);
 
   const mediaItems: Array<{ type: 'photo' | 'video'; url: string; label?: string }> = [
@@ -114,9 +116,51 @@ export function PublicActorProfile({ profile }: { profile: Profile }) {
                 )}
               </p>
             </div>
-            <Button asChild className="bg-[#8B1A1A] hover:bg-[#5C0808]">
-              <Link href="/signup">Contact / Apply</Link>
-            </Button>
+            {canContact ? (
+              <Button onClick={() => setShowContact(true)} className="bg-[#8B1A1A] hover:bg-[#5C0808]">
+                Contact / Apply
+              </Button>
+            ) : (
+              <Button asChild className="bg-[#8B1A1A] hover:bg-[#5C0808]">
+                <Link href="/signup">Contact / Apply</Link>
+              </Button>
+            )}
+
+            {/* Contact Modal */}
+            {showContact && (
+              <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/60" onClick={() => setShowContact(false)}>
+                <div className="bg-white rounded-2xl p-8 shadow-2xl min-w-[320px] relative" onClick={(e) => e.stopPropagation()}>
+                  <button onClick={() => setShowContact(false)} className="absolute top-4 right-4 text-slate-400 hover:text-slate-700">
+                    <X size={20} />
+                  </button>
+                  <h2 className="text-xl font-bold text-slate-900 mb-1">{profile.name}</h2>
+                  <p className="text-sm text-slate-500 mb-6">Contact Information</p>
+                  <div className="space-y-4">
+                    {profile.email ? (
+                      <a href={`mailto:${profile.email}`} className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-[#8B1A1A] hover:bg-[#8B1A1A]/5 transition-colors group">
+                        <Mail size={18} className="text-[#8B1A1A]" />
+                        <span className="text-slate-700 group-hover:text-[#8B1A1A] font-medium">{profile.email}</span>
+                      </a>
+                    ) : null}
+                    {profile.instagram ? (
+                      <a href={profile.instagram} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-pink-500 hover:bg-pink-50 transition-colors group">
+                        <span className="text-pink-500 font-bold text-sm">IG</span>
+                        <span className="text-slate-700 group-hover:text-pink-500 font-medium">{profile.instagram}</span>
+                      </a>
+                    ) : null}
+                    {profile.website ? (
+                      <a href={profile.website} target="_blank" rel="noopener noreferrer" className="flex items-center gap-3 p-3 rounded-xl border border-slate-200 hover:border-blue-500 hover:bg-blue-50 transition-colors group">
+                        <Phone size={18} className="text-blue-500" />
+                        <span className="text-slate-700 group-hover:text-blue-500 font-medium">{profile.website}</span>
+                      </a>
+                    ) : null}
+                    {!profile.email && !profile.instagram && !profile.website && (
+                      <p className="text-slate-400 text-center py-4">No contact information available.</p>
+                    )}
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         </div>
 
