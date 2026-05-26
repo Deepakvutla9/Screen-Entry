@@ -7,19 +7,20 @@ const PAGE_SIZE = 20;
 export default async function BrowsePage({
   searchParams,
 }: {
-  searchParams: Promise<{ page?: string }>;
+  searchParams: Promise<{ page?: string; role?: string }>;
 }) {
-  const { page } = await searchParams;
+  const { page, role } = await searchParams;
   const currentPage = Math.max(1, parseInt(page ?? '1'));
+  const activeRole = role === 'recruiter' ? 'recruiter' : 'actor';
   const from = (currentPage - 1) * PAGE_SIZE;
   const to = from + PAGE_SIZE - 1;
 
   const supabase = await createClient();
 
-  const { data: actors, count } = await supabase
+  const { data: profiles, count } = await supabase
     .from('profiles')
     .select('*', { count: 'exact' })
-    .eq('role', 'actor')
+    .eq('role', activeRole)
     .eq('status', 'active')
     .order('created_at', { ascending: false })
     .range(from, to);
@@ -28,7 +29,8 @@ export default async function BrowsePage({
 
   return (
     <BrowseClient
-      actors={(actors as Profile[]) ?? []}
+      profiles={(profiles as Profile[]) ?? []}
+      activeRole={activeRole}
       currentPage={currentPage}
       totalPages={totalPages}
       totalCount={count ?? 0}
