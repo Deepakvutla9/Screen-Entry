@@ -13,7 +13,12 @@ function initials(name: string) {
   return name.split(' ').map((n) => n[0]).join('').toUpperCase().slice(0, 2);
 }
 
-export function BrowseClient({ actors }: { actors: Profile[] }) {
+export function BrowseClient({ actors, currentPage, totalPages, totalCount }: {
+  actors: Profile[];
+  currentPage: number;
+  totalPages: number;
+  totalCount: number;
+}) {
   const [search, setSearch] = useState('');
   const [filterLang, setFilterLang] = useState('');
 
@@ -39,7 +44,7 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
       <div className="bg-gradient-to-br from-[#0D0000] via-[#8B1A1A] to-[#1a0505] py-14 px-6 text-white text-center">
         <h1 className="text-4xl font-bold tracking-tight mb-2">Browse Talent</h1>
         <p className="text-slate-300 text-lg">
-          {actors.length} actor{actors.length !== 1 ? 's' : ''} registered on Screen Entry
+          {totalCount} actor{totalCount !== 1 ? 's' : ''} registered on Screen Entry
         </p>
       </div>
 
@@ -156,6 +161,36 @@ export function BrowseClient({ actors }: { actors: Profile[] }) {
               </Link>
               );
             })}
+          </div>
+        )}
+        {/* Pagination */}
+        {totalPages > 1 && (
+          <div className="flex items-center justify-center gap-3 mt-10">
+            <a
+              href={currentPage > 1 ? `/browse?page=${currentPage - 1}` : undefined}
+              aria-disabled={currentPage <= 1}
+              className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
+                currentPage <= 1
+                  ? 'border-slate-200 text-slate-300 pointer-events-none'
+                  : 'border-slate-300 text-slate-700 hover:border-[#8B1A1A] hover:text-[#8B1A1A]'
+              }`}
+            >
+              ← Previous
+            </a>
+            <span className="text-sm text-slate-500">
+              Page <span className="font-semibold text-slate-800">{currentPage}</span> of <span className="font-semibold text-slate-800">{totalPages}</span>
+            </span>
+            <a
+              href={currentPage < totalPages ? `/browse?page=${currentPage + 1}` : undefined}
+              aria-disabled={currentPage >= totalPages}
+              className={`px-4 py-2 rounded-md text-sm font-medium border transition-colors ${
+                currentPage >= totalPages
+                  ? 'border-slate-200 text-slate-300 pointer-events-none'
+                  : 'border-slate-300 text-slate-700 hover:border-[#8B1A1A] hover:text-[#8B1A1A]'
+              }`}
+            >
+              Next →
+            </a>
           </div>
         )}
       </div>
