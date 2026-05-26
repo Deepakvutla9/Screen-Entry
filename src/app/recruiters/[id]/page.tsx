@@ -74,13 +74,6 @@ export default async function RecruiterPublicPage({ params }: { params: Promise<
       {/* Body */}
       <div className="max-w-3xl mx-auto px-6 py-10 space-y-6">
 
-        {profile.bio && (
-          <Card className="p-6">
-            <h2 className="font-bold text-slate-800 mb-2">About</h2>
-            <p className="text-slate-600 text-sm leading-relaxed">{profile.bio}</p>
-          </Card>
-        )}
-
         <Card className="p-6">
           <h2 className="font-bold text-slate-800 mb-4">Details</h2>
           <div className="space-y-3 text-sm">
