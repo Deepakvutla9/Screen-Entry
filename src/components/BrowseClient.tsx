@@ -194,7 +194,7 @@ export function BrowseClient({
             {filtered.map((recruiter) => {
               const photo = recruiter.profile_photo;
               return (
-                <Link key={recruiter.id} href={`/actors/${recruiter.id}`}>
+                <Link key={recruiter.id} href={`/recruiters/${recruiter.id}`}>
                   <Card className="group overflow-hidden p-0 border-slate-200 hover:border-[#8B1A1A]/40 hover:shadow-md transition-all cursor-pointer">
                     <div className="p-5 flex items-center gap-4">
                       <div className="shrink-0">
